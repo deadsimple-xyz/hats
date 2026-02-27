@@ -35,11 +35,11 @@ This project uses the [Hats](https://github.com/deadsimple-xyz/hats) BDD framewo
 - \`status.json\` -- dev loop progress
 
 ## Role instructions:
-Read your full instructions from \`$HATS_DIR/roles/manager.md\` before responding.
+Read your full instructions from \`$HATS_DIR/roles/mng.md\` before responding.
 
 ## Available commands:
-- \`~/.hats/manager\` -- plan and spec with the Manager
-- \`~/.hats/designer\` -- create mockups from specs
+- \`~/.hats/mng\` -- plan and spec with the Manager
+- \`~/.hats/dsgn\` -- create mockups from specs
 - \`~/.hats/cto\` -- decide technology stack
 - \`~/.hats/qa\` -- generate tests from specs
 - \`~/.hats/dev\` -- code until tests pass
@@ -69,8 +69,8 @@ echo "Project '$PROJECT_NAME' created."
 echo ""
 echo "Next steps:"
 echo "  cd $PROJECT_NAME"
-echo "  claude                  # talk to the Manager"
-echo "  ~/.hats/designer        # Designer creates mockups"
-echo "  ~/.hats/cto             # CTO decides tech stack"
-echo "  ~/.hats/qa              # QA generates tests"
-echo "  ~/.hats/dev             # Developer codes until green"
+echo "  ~/.hats/mng              # plan your project, write specs"
+echo "  ~/.hats/dsgn             # Designer creates mockups"
+echo "  ~/.hats/cto              # CTO decides tech stack"
+echo "  ~/.hats/qa               # QA generates tests"
+echo "  ~/.hats/dev              # Developer codes until green"

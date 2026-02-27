@@ -3,10 +3,9 @@
 BDD-driven AI dev team. Five roles, one [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
 
 ```
-You <-> Manager -> Designer -> CTO -> QA -> Developer
-  (plan & spec)  (mockups)  (stack) (tests) (code)
-       |              |         |       |       |
-  features/      designs/   shared/  tests/   src/
+mng -> dsgn -> cto -> qa -> dev
+ |       |      |      |     |
+specs  mockups stack  tests  code
 ```
 
 ## Requirements
@@ -28,30 +27,24 @@ To update: `cd ~/.hats && git pull`
 ~/.hats/init my-app
 cd my-app
 
-# 1. Talk to the Manager -- plan your project, write specs
-claude
-
-# 2. Designer creates mockups from specs
-~/.hats/designer
-
-# 3. CTO decides technology stack
-~/.hats/cto
-
-# 4. QA generates tests from specs
-~/.hats/qa
-
-# 5. Developer codes until tests pass
-~/.hats/dev
+# Work through the cycle
+~/.hats/mng              # plan your project, write specs
+~/.hats/dsgn             # create mockups from specs
+~/.hats/cto              # decide technology stack
+~/.hats/qa               # generate tests from specs
+~/.hats/dev              # code until tests pass
 ```
 
-Every command opens an interactive Claude Code session with the right role. Add `--run` to skip the conversation and let it work autonomously:
+Every command opens an interactive Claude Code session with the right role. You talk, it works. Add `--run` to skip the conversation and let it work autonomously:
 
 ```bash
-~/.hats/designer --run
+~/.hats/dsgn --run
 ~/.hats/cto --run
 ~/.hats/qa --run
 ~/.hats/dev --run
 ```
+
+The typical flow is `mng > dsgn > cto > qa > dev`, but you can talk to any role at any time. If you know your stack, skip the CTO. If you have your own designs, skip the Designer. If something breaks in tests, jump into `~/.hats/qa` and discuss it.
 
 ## How It Works
 
@@ -71,12 +64,12 @@ Feature: JWT Authentication
     And response contains access_token and refresh_token
 ```
 
-Then each role takes over in sequence:
+Then each role takes over:
 
 | Role | Command | Reads | Writes |
 |------|---------|-------|--------|
-| **Manager** | `claude` | everything | `features/` |
-| **Designer** | `~/.hats/designer` | `features/` | `designs/` |
+| **Manager** | `~/.hats/mng` | everything | `features/` |
+| **Designer** | `~/.hats/dsgn` | `features/` | `designs/` |
 | **CTO** | `~/.hats/cto` | `features/`, `designs/` | `shared/` |
 | **QA** | `~/.hats/qa` | `features/`, `shared/` | `tests/` |
 | **Developer** | `~/.hats/dev` | everything except `tests/` writes | `src/`, `shared/setup.md` |

@@ -61,7 +61,7 @@ Feature: JWT Authentication
 
 ## Workflow order:
 After creating/updating feature specs, guide the human through:
-1. `~/.hats/designer` -- Designer creates mockups
+1. `~/.hats/dsgn` -- Designer creates mockups
 2. `~/.hats/cto` -- CTO decides technology stack
 3. `~/.hats/qa` -- QA generates tests from specs
 4. `~/.hats/dev` -- Developer codes until tests pass

@@ -4,8 +4,9 @@ set -euo pipefail
 HATS_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 if [[ "${1:-}" == "--run" ]]; then
-    claude --system-prompt "$(cat "$HATS_DIR/roles/manager.md")" \
+    claude --system-prompt "$(cat "$HATS_DIR/roles/mng.md")" \
+      --permission-mode acceptEdits \
       -p "Review the current state of the project. Check features/*.feature, designs/, shared/, and status.json. Summarize progress and suggest next steps."
 else
-    claude --system-prompt "$(cat "$HATS_DIR/roles/manager.md")"
+    claude --system-prompt "$(cat "$HATS_DIR/roles/mng.md")"
 fi
