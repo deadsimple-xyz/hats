@@ -1,0 +1,26 @@
+#!/bin/bash
+set -euo pipefail
+
+HATS_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+if ! compgen -G "features/*.feature" > /dev/null 2>&1; then
+    echo "No .feature files found. Talk to the Manager first: claude"
+    exit 1
+fi
+
+mkdir -p tests
+
+cat > status.json <<EOF
+{
+  "phase": "generating-tests",
+  "last_updated": "$(date -Iseconds)",
+  "summary": "QA generating tests from specs"
+}
+EOF
+
+if [[ "${1:-}" == "--run" ]]; then
+    claude --system-prompt "$(cat "$HATS_DIR/roles/qa.md")" \
+      -p "Read ALL features/*.feature files and generate automated tests for every scenario. Create tests/run-tests.sh to run them. Tests will fail now -- that is expected, no implementation yet."
+else
+    claude --system-prompt "$(cat "$HATS_DIR/roles/qa.md")"
+fi

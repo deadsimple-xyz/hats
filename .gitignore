@@ -3,6 +3,3 @@ __pycache__/
 venv/
 .env
 *.log
-qa/reports/
-developer/reports/
-developer/current-bugs.md

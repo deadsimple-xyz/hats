@@ -1,0 +1,26 @@
+#!/bin/bash
+set -euo pipefail
+
+HATS_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+if ! compgen -G "features/*.feature" > /dev/null 2>&1; then
+    echo "No .feature files found. Talk to the Manager first: claude"
+    exit 1
+fi
+
+mkdir -p shared
+
+cat > status.json <<EOF
+{
+  "phase": "planning-stack",
+  "last_updated": "$(date -Iseconds)",
+  "summary": "CTO deciding technology stack"
+}
+EOF
+
+if [[ "${1:-}" == "--run" ]]; then
+    claude --system-prompt "$(cat "$HATS_DIR/roles/cto.md")" \
+      -p "Review all features/*.feature files and designs/ (if present). Make technology decisions for this project: programming language, framework, database, hosting, project structure, coding conventions. Write your decisions to shared/stack.md. If relevant, also create shared/setup.md with installation and run instructions, and shared/api.md with API conventions."
+else
+    claude --system-prompt "$(cat "$HATS_DIR/roles/cto.md")"
+fi

@@ -1,9 +1,9 @@
-# Role: Technical Manager
+# Hats Framework
 
-Read your full instructions from `manager/CLAUDE.md` before responding.
+This is the Hats BDD framework repository. It is installed at `~/.hats`.
 
-This is a Hats project — BDD-driven AI dev team.
-- `features/` contains Gherkin specs
-- `qa/` is the QA role
-- `developer/` is the developer role  
-- `status.json` tracks dev loop progress
+Do not run `claude` from this directory. Instead:
+1. `~/.hats/init my-project` to create a project
+2. `cd my-project && claude` to start working
+
+See README.md for full documentation.
