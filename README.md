@@ -15,36 +15,41 @@ specs  mockups stack  tests  code
 ## Install
 
 ```bash
-git clone git@github.com:deadsimple-xyz/hats.git ~/.hats
+claude plugin install hats@deadsimple-xyz/hats
 ```
 
-To update: `cd ~/.hats && git pull`
+Or install from local clone:
+
+```bash
+git clone git@github.com:deadsimple-xyz/hats.git
+claude --plugin-dir ./hats
+```
 
 ## Usage
 
 ```bash
-# Create a new project
-~/.hats/init my-app
-cd my-app
+mkdir my-app && cd my-app && git init
 
-# Work through the cycle
-~/.hats/mng              # plan your project, write specs
-~/.hats/dsgn             # create mockups from specs
-~/.hats/cto              # decide technology stack
-~/.hats/qa               # generate tests from specs
-~/.hats/dev              # code until tests pass
+# Start Claude Code -- Manager agent loads by default
+claude
 ```
 
-Every command opens an interactive Claude Code session with the right role. You talk, it works. Add `--run` to skip the conversation and let it work autonomously:
+The Manager helps you plan your project and write Gherkin specs. When ready, switch roles:
 
-```bash
-~/.hats/dsgn --run
-~/.hats/cto --run
-~/.hats/qa --run
-~/.hats/dev --run
+```
+/agents              # pick: mng, dsgn, cto, qa, dev
 ```
 
-The typical flow is `mng > dsgn > cto > qa > dev`, but you can talk to any role at any time. If you know your stack, skip the CTO. If you have your own designs, skip the Designer. If something breaks in tests, jump into `~/.hats/qa` and discuss it.
+Or just ask:
+
+```
+"Switch to the Designer agent"
+"Have the QA generate tests"
+```
+
+Use `/hats:init` to scaffold the standard project structure.
+
+The typical flow is `mng > dsgn > cto > qa > dev`, but you can talk to any role at any time. If you know your stack, skip the CTO. If you have your own designs, skip the Designer. If something breaks in tests, jump into QA and discuss it.
 
 ## How It Works
 
@@ -66,23 +71,22 @@ Feature: JWT Authentication
 
 Then each role takes over:
 
-| Role | Command | Reads | Writes |
-|------|---------|-------|--------|
-| **Manager** | `~/.hats/mng` | everything | `features/` |
-| **Designer** | `~/.hats/dsgn` | `features/` | `designs/` |
-| **CTO** | `~/.hats/cto` | `features/`, `designs/` | `shared/` |
-| **QA** | `~/.hats/qa` | `features/`, `shared/` | `tests/` |
-| **Developer** | `~/.hats/dev` | everything except `tests/` writes | `src/`, `shared/setup.md` |
+| Role | Agent | Reads | Writes |
+|------|-------|-------|--------|
+| **Manager** | `mng` | everything | `features/` |
+| **Designer** | `dsgn` | `features/` | `designs/` |
+| **CTO** | `cto` | `features/`, `designs/` | `shared/` |
+| **QA** | `qa` | `features/`, `shared/` | `tests/` |
+| **Developer** | `dev` | everything except `tests/` writes | `src/`, `shared/setup.md` |
 
-Each role runs in its own Claude Code session with its own system prompt. The QA doesn't know how the Developer will implement things. The Developer can't modify the QA's tests. This separation is the point -- no shared blind spots.
+Each role is a separate Claude Code agent with its own system prompt. The QA doesn't know how the Developer will implement things. The Developer can't modify the QA's tests. This separation is the point -- no shared blind spots.
 
 ## Project Structure
 
-After `~/.hats/init my-app`:
+After `/hats:init`:
 
 ```
 my-app/
-  CLAUDE.md        Points to ~/.hats for role instructions
   status.json      Current state
   features/        Gherkin specs
   designs/         Mockups and wireframes

@@ -1,0 +1,13 @@
+{
+  "name": "hats",
+  "version": "1.0.0",
+  "description": "BDD-driven AI dev team. Five roles: Manager, Designer, CTO, QA, Developer.",
+  "author": {
+    "name": "deadsimple"
+  },
+  "repository": "https://github.com/deadsimple-xyz/hats",
+  "license": "MIT",
+  "keywords": ["bdd", "gherkin", "agents", "roles", "tdd"],
+  "agents": "./agents/",
+  "skills": "./skills/"
+}
