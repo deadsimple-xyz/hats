@@ -14,11 +14,14 @@ specs  mockups stack  tests  code
 
 ## Install
 
-```bash
-claude plugin install hats@deadsimple-xyz/hats
+In Claude Code:
+
+```
+/plugin marketplace add deadsimple-xyz/hats
+/plugin install hats@deadsimple-xyz
 ```
 
-Or install from local clone:
+Or test from a local clone:
 
 ```bash
 git clone git@github.com:deadsimple-xyz/hats.git
