@@ -1,5 +1,4 @@
 ---
-name: init
 description: Scaffold a new Hats BDD project with the standard directory structure.
 disable-model-invocation: true
 ---
@@ -32,4 +31,4 @@ venv/
 ```
 
 ## After creating the structure:
-Tell the user the project is ready and they can start planning with you (the Manager).
+Tell the user: "Project ready. Run `/hats:mng` to talk to the Manager and plan your app."

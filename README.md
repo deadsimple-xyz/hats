@@ -32,19 +32,16 @@ claude --plugin-dir ./hats
 
 ```bash
 mkdir my-app && cd my-app && git init
-
-# Start Claude Code -- Manager agent loads by default
 claude
 ```
 
-Use `/hats:init` to scaffold the standard project structure.
-
-The Manager helps you plan your project and write Gherkin specs. When ready, switch roles by asking:
-
 ```
-"Switch to the Designer agent"
-"Switch to CTO"
-"Have the QA generate tests"
+/hats:init          # scaffold the project
+/hats:mng           # "Manager here. What are we building?"
+/hats:dsgn          # "Any ideas for the look, or should I read the specs?"
+/hats:cto           # "Got any stack preferences, or should I figure it out?"
+/hats:qa            # "Want me to generate tests from the specs?"
+/hats:dev           # "Ready to work!"
 ```
 
 The typical flow is `mng > dsgn > cto > qa > dev`, but you can talk to any role at any time. If you know your stack, skip the CTO. If you have your own designs, skip the Designer. If something breaks in tests, jump into QA and discuss it.
@@ -69,15 +66,15 @@ Feature: JWT Authentication
 
 Then each role takes over:
 
-| Role | Agent | Reads | Writes |
-|------|-------|-------|--------|
-| **Manager** | `mng` | everything | `features/` |
-| **Designer** | `dsgn` | `features/` | `designs/` |
-| **CTO** | `cto` | `features/`, `designs/` | `shared/` |
-| **QA** | `qa` | `features/`, `shared/` | `tests/` |
-| **Developer** | `dev` | everything except `tests/` writes | `src/`, `shared/setup.md` |
+| Role | Agent | Can read | Can write |
+|------|-------|----------|-----------|
+| **Manager** | `mng` | `features/`, `designs/`, `shared/` | `features/` |
+| **Designer** | `dsgn` | `features/`, `designs/`, `shared/` | `designs/` |
+| **CTO** | `cto` | `features/`, `designs/`, `shared/` | `shared/` |
+| **QA** | `qa` | `features/`, `designs/`, `shared/`, `tests/` | `tests/`, `shared/qa-report.md` |
+| **Developer** | `dev` | `features/`, `designs/`, `shared/`, `src/` | `src/`, `shared/` |
 
-Each role is a separate Claude Code agent with its own system prompt. The QA doesn't know how the Developer will implement things. The Developer can't modify the QA's tests. This separation is the point -- no shared blind spots.
+Permissions are enforced by hooks -- the Developer literally *can't* read tests, and the QA *can't* read source code. QA writes a plain-language report (`shared/qa-report.md`) so the Developer understands what failed and why, without seeing test code.
 
 ## Project Structure
 
@@ -92,15 +89,16 @@ my-app/
     stack.md         Technology decisions (CTO)
     setup.md         How to run the project (CTO/Developer)
     api.md           API conventions (CTO/Developer)
+    qa-report.md     Test results for Developer (QA)
   src/             Implementation code
   tests/           Automated tests
 ```
 
 ## Why
 
-When one AI writes code AND tests, it tests its own assumptions -- same blind spots. By splitting into roles with separate contexts and separate prompts, the QA tests *requirements* while the Developer implements *solutions*. Neither can see the other's instructions.
+When one AI writes code AND tests, it tests its own assumptions -- same blind spots. By splitting into roles with separate contexts and separate prompts, the QA tests *requirements* while the Developer implements *solutions*. Neither can see the other's code.
 
-Gherkin `.feature` files are the contract between roles: readable by you, parseable by the AI.
+The Developer can't read test source -- only test results via `shared/qa-report.md` and `bash tests/run-tests.sh`. The QA can't read implementation -- it writes tests from specs alone. Gherkin `.feature` files are the contract between roles: readable by you, parseable by the AI.
 
 ## License
 
