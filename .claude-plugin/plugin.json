@@ -7,7 +7,5 @@
   },
   "repository": "https://github.com/deadsimple-xyz/hats",
   "license": "MIT",
-  "keywords": ["bdd", "gherkin", "agents", "roles", "tdd"],
-  "agents": "./agents/",
-  "skills": "./skills/"
+  "keywords": ["bdd", "gherkin", "agents", "roles", "tdd"]
 }

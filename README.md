@@ -37,20 +37,15 @@ mkdir my-app && cd my-app && git init
 claude
 ```
 
-The Manager helps you plan your project and write Gherkin specs. When ready, switch roles:
+Use `/hats:init` to scaffold the standard project structure.
 
-```
-/agents              # pick: mng, dsgn, cto, qa, dev
-```
-
-Or just ask:
+The Manager helps you plan your project and write Gherkin specs. When ready, switch roles by asking:
 
 ```
 "Switch to the Designer agent"
+"Switch to CTO"
 "Have the QA generate tests"
 ```
-
-Use `/hats:init` to scaffold the standard project structure.
 
 The typical flow is `mng > dsgn > cto > qa > dev`, but you can talk to any role at any time. If you know your stack, skip the CTO. If you have your own designs, skip the Designer. If something breaks in tests, jump into QA and discuss it.
 

@@ -1,7 +1,7 @@
 ---
 name: init
 description: Scaffold a new Hats BDD project with the standard directory structure.
-allowed-tools: Bash, Write, Read
+disable-model-invocation: true
 ---
 
 # Initialize Hats Project
