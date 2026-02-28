@@ -14,26 +14,15 @@ specs  mockups stack  tests  code
 
 ## Install
 
-In Claude Code:
-
-```
-/plugin marketplace add deadsimple-xyz/hats
-/plugin install hats@deadsimple-xyz
-```
-
-Or test from a local clone:
-
 ```bash
-git clone git@github.com:deadsimple-xyz/hats.git
-claude --plugin-dir ./hats
+git clone https://github.com/deadsimple-xyz/hats.git
+mkdir my-app && cd my-app && git init
+claude --plugin-dir ../hats
 ```
+
+Official marketplace listing is pending review.
 
 ## Usage
-
-```bash
-mkdir my-app && cd my-app && git init
-claude
-```
 
 ```
 /hats:init          # scaffold the project
