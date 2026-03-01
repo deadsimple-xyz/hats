@@ -3,9 +3,9 @@
 BDD-driven AI dev team. Five roles, one [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
 
 ```
-mng -> dsgn -> cto -> qa -> dev
- |       |      |      |     |
-specs  mockups stack  tests  code
+manager -> designer -> cto -> qa -> developer
+   |          |         |      |       |
+ specs     mockups    stack  tests    code
 ```
 
 ## Requirements
@@ -25,15 +25,16 @@ Official marketplace listing is pending review.
 ## Usage
 
 ```
-/hats:init          # scaffold the project
-/hats:mng           # "Manager here. What are we building?"
-/hats:dsgn          # "Any ideas for the look, or should I read the specs?"
+/hats:init          # new project — scaffold the directory structure
+/hats:adopt         # existing project — move code to developer/, generate specs
+/hats:manager       # "Manager here. What are we building?"
+/hats:designer      # "Any ideas for the look, or should I read the specs?"
 /hats:cto           # "Got any stack preferences, or should I figure it out?"
 /hats:qa            # "Want me to generate tests from the specs?"
-/hats:dev           # "Ready to work!"
+/hats:developer     # "Ready to work!"
 ```
 
-The typical flow is `mng > dsgn > cto > qa > dev`, but you can talk to any role at any time. If you know your stack, skip the CTO. If you have your own designs, skip the Designer. If something breaks in tests, jump into QA and discuss it.
+The typical flow is `manager > designer > cto > qa > developer`, but you can talk to any role at any time. If you know your stack, skip the CTO. If you have your own designs, skip the Designer. If something breaks in tests, jump into QA and discuss it.
 
 ## How It Works
 
@@ -57,11 +58,11 @@ Then each role takes over:
 
 | Role | Agent | Can read | Can write |
 |------|-------|----------|-----------|
-| **Manager** | `mng` | `features/`, `designs/`, `shared/` | `features/` |
-| **Designer** | `dsgn` | `features/`, `designs/`, `shared/` | `designs/` |
-| **CTO** | `cto` | `features/`, `designs/`, `shared/` | `shared/` |
-| **QA** | `qa` | `features/`, `designs/`, `shared/`, `tests/` | `tests/`, `shared/qa-report.md` |
-| **Developer** | `dev` | `features/`, `designs/`, `shared/`, `src/` | `src/`, `shared/` |
+| **Manager** | `manager` | `manager/`, `designer/`, `shared/` | `manager/` |
+| **Designer** | `designer` | `manager/`, `designer/`, `shared/` | `designer/` |
+| **CTO** | `cto` | `manager/`, `designer/`, `shared/` | `shared/` |
+| **QA** | `qa` | `manager/`, `designer/`, `shared/`, `qa/` | `qa/`, `shared/qa-report.md` |
+| **Developer** | `developer` | `manager/`, `designer/`, `shared/`, `developer/` | `developer/`, `shared/` |
 
 Permissions are enforced by hooks -- the Developer literally *can't* read tests, and the QA *can't* read source code. QA writes a plain-language report (`shared/qa-report.md`) so the Developer understands what failed and why, without seeing test code.
 
@@ -71,23 +72,24 @@ After `/hats:init`:
 
 ```
 my-app/
-  status.json      Current state
-  features/        Gherkin specs
-  designs/         Mockups and wireframes
+  manager/         Gherkin specs
+  designer/        Mockups and wireframes
+  cto/             (no dir -- writes to shared/)
+  qa/              Automated tests
+  developer/       Implementation code
   shared/          Cross-role knowledge
     stack.md         Technology decisions (CTO)
     setup.md         How to run the project (CTO/Developer)
     api.md           API conventions (CTO/Developer)
     qa-report.md     Test results for Developer (QA)
-  src/             Implementation code
-  tests/           Automated tests
+  status.json      Current state
 ```
 
 ## Why
 
 When one AI writes code AND tests, it tests its own assumptions -- same blind spots. By splitting into roles with separate contexts and separate prompts, the QA tests *requirements* while the Developer implements *solutions*. Neither can see the other's code.
 
-The Developer can't read test source -- only test results via `shared/qa-report.md` and `bash tests/run-tests.sh`. The QA can't read implementation -- it writes tests from specs alone. Gherkin `.feature` files are the contract between roles: readable by you, parseable by the AI.
+The Developer can't read test source -- only test results via `shared/qa-report.md` and `bash qa/run-tests.sh`. The QA can't read implementation -- it writes tests from specs alone. Gherkin `.feature` files are the contract between roles: readable by you, parseable by the AI.
 
 ## License
 

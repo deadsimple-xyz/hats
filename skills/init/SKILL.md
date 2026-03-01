@@ -8,11 +8,11 @@ disable-model-invocation: true
 Create the standard Hats BDD project structure in the current directory.
 
 ## Create these directories:
-- `features/`
-- `designs/`
+- `manager/`
+- `designer/`
 - `shared/`
-- `src/`
-- `tests/`
+- `developer/`
+- `qa/`
 
 ## Create these files:
 
@@ -31,4 +31,4 @@ venv/
 ```
 
 ## After creating the structure:
-Tell the user: "Project ready. Run `/hats:mng` to talk to the Manager and plan your app."
+Tell the user: "Project ready. Run `/hats:manager` to talk to the Manager and plan your app."
