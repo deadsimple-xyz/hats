@@ -25,8 +25,7 @@ Official marketplace listing is pending review.
 ## Usage
 
 ```
-/hats:init          # new project — scaffold the directory structure
-/hats:adopt         # existing project — move code to developer/, generate specs
+/hats:init          # set up project (new or existing)
 /hats:manager       # "Manager here. What are we building?"
 /hats:designer      # "Any ideas for the look, or should I read the specs?"
 /hats:cto           # "Got any stack preferences, or should I figure it out?"
