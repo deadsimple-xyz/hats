@@ -71,11 +71,11 @@ After `/hats:init`:
 
 ```
 my-app/
-  manager/         Gherkin specs
+  manager/         Project specs (.feature files)
   designer/        Mockups and wireframes
   cto/             (no dir -- writes to shared/)
-  qa/              Automated tests
-  developer/       Implementation code
+  qa/              Automated e2e tests
+  developer/       Project code and internal tests
   shared/          Cross-role knowledge
     stack.md         Technology decisions (CTO)
     setup.md         How to run the project (CTO/Developer)

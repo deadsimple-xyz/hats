@@ -7,13 +7,16 @@ disable-model-invocation: true
 
 ## Step 1: Check for existing code
 
-Look at the current directory. If there are source code files (anything besides .git, .gitignore, README, etc.):
+Look at the current directory. If there are source code files (anything besides `.git/`, `.gitignore`, `README*`, `LICENSE*`):
 - Tell the user what you found
-- Ask: "Want me to move your existing code to `developer/`? Config files stay at the root."
-- **Wait for confirmation before moving anything**
-- If yes: move source code to `developer/`, keep config files (package.json, pyproject.toml, Cargo.toml, .env, .gitignore, etc.) at root
+- Ask which option they prefer:
+  1. **(Recommended)** Move existing files to `developer/` automatically. All files move except: `.git/`, config files (`package.json`, `pyproject.toml`, `Cargo.toml`, `.env`, `.gitignore`, `README*`, `LICENSE*`, etc.) which stay at root.
+  2. Create Hats directories only and let the user move files manually.
+- **Wait for the user to choose before doing anything**
+- If option 1: move files to `developer/`, skip `.git/` entirely
+- If option 2: skip straight to Step 2
 
-If the directory is empty or only has .git, skip to Step 2.
+If the directory is empty or only has `.git/`, skip to Step 2.
 
 ## Step 2: Create Hats structure
 
