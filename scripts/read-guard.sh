@@ -1,9 +1,15 @@
 #!/bin/bash
-# Blocks Read/Glob/Grep access to directories passed as arguments.
-# Usage: read-guard.sh src/ tests/
-# Reads PreToolUse hook JSON from stdin.
+# Blocks Read/Glob/Grep to directories the current role cannot access.
+# Called from hooks/hooks.json. Reads .hats-role for the active agent.
 
 INPUT=$(cat)
+
+ROLE_FILE=".hats-role"
+if [ ! -f "$ROLE_FILE" ]; then
+  exit 0
+fi
+
+ROLE=$(cat "$ROLE_FILE")
 
 # Read uses file_path, Glob uses pattern/path, Grep uses path/pattern
 PATH_VAL=$(echo "$INPUT" | jq -r '
@@ -17,9 +23,19 @@ if [ -z "$PATH_VAL" ]; then
   exit 0
 fi
 
-for blocked in "$@"; do
+# Per-role read restrictions
+case "$ROLE" in
+  manager)   BLOCKED="developer/ qa/" ;;
+  designer)  BLOCKED="developer/ qa/" ;;
+  cto)       BLOCKED="developer/ qa/" ;;
+  qa)        BLOCKED="developer/" ;;
+  developer) BLOCKED="qa/" ;;
+  *) exit 0 ;;
+esac
+
+for blocked in $BLOCKED; do
   if echo "$PATH_VAL" | grep -q "/${blocked}" || echo "$PATH_VAL" | grep -q "^${blocked}"; then
-    echo "Blocked: this role cannot read ${blocked}" >&2
+    echo "Blocked: ${ROLE} cannot read ${blocked}" >&2
     exit 2
   fi
 done
