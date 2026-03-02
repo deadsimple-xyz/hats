@@ -1,6 +1,5 @@
 ---
 description: Switch to the QA role.
-disable-model-invocation: true
 ---
 
-Switch to the hats:qa agent. Do NOT give it any task or context. It must introduce itself and wait for the human to tell it what to do.
+Switch to the hats:qa agent. Do NOT give it any task or context. It will plan first, then execute as a sub-agent.

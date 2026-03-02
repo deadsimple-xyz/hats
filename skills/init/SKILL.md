@@ -1,6 +1,5 @@
 ---
 description: Initialize Hats in a new or existing project.
-disable-model-invocation: true
 ---
 
 # Initialize Hats
@@ -23,6 +22,7 @@ If the directory is empty or only has `.git/`, skip to Step 2.
 Create the missing directories and files (do NOT overwrite existing files):
 - `manager/`
 - `designer/`
+- `cto/`
 - `shared/`
 - `developer/`
 - `qa/`
@@ -37,7 +37,43 @@ Create the missing directories and files (do NOT overwrite existing files):
   *.log
   ```
 
-## Step 3: Generate specs from existing code
+## Step 3: Create symlinks
+
+Create `.hats-*` symlinks in each role's folder. These give each role access to the data it needs while maintaining isolation.
+
+**manager/**
+```bash
+ln -sfn ../shared manager/.hats-shared
+ln -sfn ../designer manager/.hats-designs
+```
+
+**designer/**
+```bash
+ln -sfn ../shared designer/.hats-shared
+ln -sfn ../manager designer/.hats-specs
+```
+
+**cto/**
+```bash
+ln -sfn ../shared cto/.hats-shared
+ln -sfn ../manager cto/.hats-specs
+ln -sfn ../designer cto/.hats-designs
+```
+
+**qa/**
+```bash
+ln -sfn ../shared qa/.hats-shared
+ln -sfn ../manager qa/.hats-specs
+```
+
+**developer/**
+```bash
+ln -sfn ../shared developer/.hats-shared
+ln -sfn ../manager developer/.hats-specs
+ln -sfn ../designer developer/.hats-designs
+```
+
+## Step 4: Generate specs from existing code
 
 If code was moved to `developer/` in Step 1, ask: "Want me to generate Gherkin specs from your code? I'll create .feature files in manager/ describing what your app already does."
 - If yes: read `developer/`, generate `.feature` files
