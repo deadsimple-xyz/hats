@@ -23,6 +23,13 @@ if [ -z "$PATH_VAL" ]; then
   exit 0
 fi
 
+# Resolve symlinks for file paths (not glob patterns)
+# Only resolve if the parent directory exists (i.e. it's a real path, not a pattern)
+PARENT=$(dirname "$PATH_VAL")
+if [ -d "$PARENT" ]; then
+  PATH_VAL="$(cd "$PARENT" && pwd -P)/$(basename "$PATH_VAL")"
+fi
+
 # Per-role read restrictions
 case "$ROLE" in
   manager)   BLOCKED="developer/ qa/" ;;

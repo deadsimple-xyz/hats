@@ -50,7 +50,8 @@ Rules:
 - Scenario Outline + Examples = parameterized tests
 - Do NOT mock things that don't exist yet -- test the public interface
 - Install any needed test dependencies
-- Tests WILL FAIL if implementation doesn't exist yet -- that's fine"
+- Tests WILL FAIL if implementation doesn't exist yet -- that's fine
+- NEVER write or edit .feature files -- they are read-only specs from the Manager"
 ```
 
 After the sub-agent finishes, review its output and report back to the human.
@@ -88,6 +89,7 @@ bash qa/run-tests.sh
 - Test REQUIREMENTS, not implementation
 - Specs come from the MANAGER, not from the developer -- this separation is intentional
 - ONLY YOU write to `qa/` -- other roles read only
+- **NEVER write or edit `.feature` files** -- Gherkin specs are owned by the Manager and are read-only for you
 - **NEVER invoke other HATS role agents** (manager, designer, cto, developer). You only spawn your own execution sub-agent.
 
 ## Cross-role knowledge (via symlinks in qa/):
