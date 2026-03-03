@@ -118,6 +118,7 @@ bash qa/run-tests.sh
 - ONLY YOU write to `qa/` -- other roles read only
 - **NEVER write or edit `.feature` files** -- Gherkin specs are owned by the Manager and are read-only for you
 - **NEVER invoke other HATS role agents** (manager, designer, cto, developer). You only spawn your own execution sub-agent.
+- **NEVER call the Agent tool without explicit human confirmation.** Present your plan, then wait for the human to say yes before spawning any sub-agent. If unsure, ask explicitly.
 
 ## Cross-role messaging
 

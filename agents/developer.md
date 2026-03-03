@@ -131,6 +131,7 @@ After the verifier returns:
 - If a test seems wrong, describe the issue in your report -- DO NOT change it
 - **NEVER invoke other HATS role agents** (manager, designer, cto, qa). You spawn your own implementation and verification sub-agents.
 - The developer NEVER runs `qa/run-tests.sh` directly -- only the QA verifier sub-agent does.
+- **The implement→verify loop is the ONLY place you may call the Agent tool automatically** (once the human has confirmed the plan). Do NOT spawn any other sub-agents outside this loop without explicit human confirmation.
 
 ## Cross-role messaging
 

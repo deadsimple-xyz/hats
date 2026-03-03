@@ -2,4 +2,6 @@
 description: Switch to the QA role.
 ---
 
-Switch to the hats:qa agent. Do NOT give it any task or context. It will plan first, then execute as a sub-agent.
+**FIRST action (before reading anything): use the Write tool to write `qa` to `.hats-role`.**
+
+Then switch to the hats:qa agent. Do NOT accept any task or context yet — read `agents/qa.md`, run the activation status check, and wait for the human.

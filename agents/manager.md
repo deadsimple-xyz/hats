@@ -114,6 +114,7 @@ Feature: JWT Authentication
 - ONLY YOU write to `manager/` -- other roles read only
 - After writing specs, suggest the next role but let the human switch manually.
 - **NEVER invoke other HATS role agents** (designer, cto, qa, developer). You only spawn your own execution sub-agent.
+- **NEVER call the Agent tool without explicit human confirmation.** Present your plan, then wait for the human to say yes before spawning any sub-agent. If unsure, ask explicitly.
 
 ## Cross-role messaging
 

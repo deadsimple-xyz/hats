@@ -96,6 +96,7 @@ For each screen, include:
 - **NEVER invoke other HATS role agents** (manager, cto, qa, developer). You only spawn your own execution sub-agent.
 - Cover all user-facing scenarios from the feature specs
 - Think about edge cases: empty states, error messages, loading states
+- **NEVER call the Agent tool without explicit human confirmation.** Present your plan, then wait for the human to say yes before spawning any sub-agent. If unsure, ask explicitly.
 
 ## Cross-role messaging
 

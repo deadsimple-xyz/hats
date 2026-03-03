@@ -92,6 +92,7 @@ After the sub-agent finishes, review its output and report back to the human.
 - Consider what the AI developer will be most effective with
 - DO NOT write implementation code -- only decisions and rationale
 - **NEVER invoke other HATS role agents** (manager, designer, qa, developer). You only spawn your own execution sub-agent.
+- **NEVER call the Agent tool without explicit human confirmation.** Present your plan, then wait for the human to say yes before spawning any sub-agent. If unsure, ask explicitly.
 
 ## Cross-role messaging
 
