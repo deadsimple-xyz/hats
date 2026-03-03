@@ -8,32 +8,26 @@ description: Initialize Hats in a new or existing project.
 
 Look at the current directory. If there are source code files (anything besides `.git/`, `.gitignore`, `README*`, `LICENSE*`):
 - Tell the user what you found
-- Ask which option they prefer:
-  1. **(Recommended)** Move existing files to `developer/` automatically. All files move except: `.git/`, config files (`package.json`, `pyproject.toml`, `Cargo.toml`, `.env`, `.gitignore`, `README*`, `LICENSE*`, etc.) which stay at root.
-  2. Create Hats directories only and let the user move files manually.
-- **Wait for the user to choose before doing anything**
-- If option 1: move files to `developer/`, skip `.git/` entirely
-- If option 2: skip straight to Step 2
+- Say: "Found existing code — it stays at the project root. Hats adds a `.hats/` folder for specs, designs, and tests."
 
 If the directory is empty or only has `.git/`, skip to Step 2.
 
 ## Step 2: Create Hats structure
 
 Create the missing directories and files (do NOT overwrite existing files):
-- `manager/`
-- `designer/`
-- `cto/`
-- `shared/`
-- `developer/`
-- `qa/`
-- `shared/manager2team.md` (empty)
-- `shared/cto2team.md` (empty)
-- `shared/qa2dev.md` (empty)
-- `shared/dev2qa.md` (empty)
-- `shared/dev2designer.md` (empty)
-- `shared/qa2designer.md` (empty)
-- `shared/designer2team.md` (empty)
-- `status.json` (with default messaging structure — see MIGRATIONS.md for the full `messages` schema)
+- `.hats/manager/`
+- `.hats/designer/`
+- `.hats/cto/`
+- `.hats/shared/`
+- `.hats/qa/`
+- `.hats/shared/manager2team.md` (empty)
+- `.hats/shared/cto2team.md` (empty)
+- `.hats/shared/qa2dev.md` (empty)
+- `.hats/shared/dev2qa.md` (empty)
+- `.hats/shared/dev2designer.md` (empty)
+- `.hats/shared/qa2designer.md` (empty)
+- `.hats/shared/designer2team.md` (empty)
+- `.hats/status.json` (with default messaging structure — see MIGRATIONS.md for the full `messages` schema)
 - `.gitignore` (append if exists, create if not):
   ```
   node_modules/
@@ -48,42 +42,37 @@ Create the missing directories and files (do NOT overwrite existing files):
 
 Create `.hats-*` symlinks in each role's folder. These give each role access to the data it needs while maintaining isolation.
 
-**manager/**
+**`.hats/manager/`**
 ```bash
-ln -sfn ../shared manager/.hats-shared
-ln -sfn ../designer manager/.hats-designer
+ln -sfn ../shared .hats/manager/.hats-shared
+ln -sfn ../designer .hats/manager/.hats-designer
 ```
 
-**designer/**
+**`.hats/designer/`**
 ```bash
-ln -sfn ../shared designer/.hats-shared
-ln -sfn ../manager designer/.hats-manager
+ln -sfn ../shared .hats/designer/.hats-shared
+ln -sfn ../manager .hats/designer/.hats-manager
 ```
 
-**cto/**
+**`.hats/cto/`**
 ```bash
-ln -sfn ../shared cto/.hats-shared
-ln -sfn ../manager cto/.hats-manager
-ln -sfn ../designer cto/.hats-designer
+ln -sfn ../shared .hats/cto/.hats-shared
+ln -sfn ../manager .hats/cto/.hats-manager
+ln -sfn ../designer .hats/cto/.hats-designer
 ```
 
-**qa/**
+**`.hats/qa/`**
 ```bash
-ln -sfn ../shared qa/.hats-shared
-ln -sfn ../manager qa/.hats-manager
+ln -sfn ../shared .hats/qa/.hats-shared
+ln -sfn ../manager .hats/qa/.hats-manager
 ```
 
-**developer/**
-```bash
-ln -sfn ../shared developer/.hats-shared
-ln -sfn ../manager developer/.hats-manager
-ln -sfn ../designer developer/.hats-designer
-```
+No symlinks are created for the developer — developer reads `.hats/` paths directly from the project root.
 
 ## Step 4: Generate specs from existing code
 
-If code was moved to `developer/` in Step 1, ask: "Want me to generate Gherkin specs from your code? I'll create .feature files in manager/ describing what your app already does."
-- If yes: read `developer/`, generate `.feature` files
+If code exists in the project, ask: "Want me to generate Gherkin specs from your code? I'll create .feature files in `.hats/manager/` describing what your app already does."
+- If yes: read existing source files, generate `.feature` files in `.hats/manager/`
 - If no: skip
 
 ## Done

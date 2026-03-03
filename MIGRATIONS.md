@@ -2,6 +2,52 @@
 
 The doctor reads this file to upgrade old Hats projects.
 
+## 2.3.0 → 3.0.0
+
+### Breaking: directory restructure
+
+All Hats directories move into `.hats/`. The `developer/` directory is eliminated — code lives at project root.
+
+**Move code out of developer/ (if applicable):**
+```bash
+# If your code was in developer/, move it to project root first:
+mv developer/* . && rm -rf developer/
+```
+
+**Remove old Hats dirs** (after moving content):
+```bash
+rm -rf manager/ designer/ cto/ shared/ qa/ status.json
+```
+
+**Create new structure:**
+```bash
+mkdir -p .hats/{manager,designer,cto,shared,qa}
+# Move specs:
+mv manager/*.feature .hats/manager/ 2>/dev/null || true
+# Move designs:
+mv designer/* .hats/designer/ 2>/dev/null || true
+# Move tests:
+mv qa/* .hats/qa/ 2>/dev/null || true
+# Move shared:
+mv shared/* .hats/shared/ 2>/dev/null || true
+mv status.json .hats/status.json 2>/dev/null || true
+```
+
+**Recreate symlinks:**
+```bash
+ln -sfn ../shared .hats/manager/.hats-shared
+ln -sfn ../designer .hats/manager/.hats-designer
+ln -sfn ../shared .hats/designer/.hats-shared
+ln -sfn ../manager .hats/designer/.hats-manager
+ln -sfn ../shared .hats/cto/.hats-shared
+ln -sfn ../manager .hats/cto/.hats-manager
+ln -sfn ../designer .hats/cto/.hats-designer
+ln -sfn ../shared .hats/qa/.hats-shared
+ln -sfn ../manager .hats/qa/.hats-manager
+```
+
+Note: no symlinks are created for the developer role — developer reads `.hats/` paths directly.
+
 ## 2.2.0 → 2.3.0
 
 ### Symlink renames

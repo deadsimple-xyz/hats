@@ -4,58 +4,52 @@ description: Diagnose and fix a Hats project structure (missing dirs, symlinks, 
 
 # Doctor
 
-Read `MIGRATIONS.md` for the full list of version-specific changes. The checks below reflect the current version (2.3.0).
+Read `MIGRATIONS.md` for the full list of version-specific changes. The checks below reflect the current version (3.0.0).
 
 ## Step 1: Check everything
 
 Inspect the project root and print a checklist report. Mark each item as **ok**, **missing**, or **broken** (symlink exists but points to wrong target).
 
-### Directories (6)
+### Directories (5)
 
-- `manager/`
-- `designer/`
-- `cto/`
-- `shared/`
-- `developer/`
-- `qa/`
+- `.hats/manager/`
+- `.hats/designer/`
+- `.hats/cto/`
+- `.hats/shared/`
+- `.hats/qa/`
 
-### Symlinks (12)
+### Symlinks (9)
 
-**manager/**
-- `manager/.hats-shared` → `../shared`
-- `manager/.hats-designer` → `../designer`
+**`.hats/manager/`**
+- `.hats/manager/.hats-shared` → `../shared`
+- `.hats/manager/.hats-designer` → `../designer`
 
-**designer/**
-- `designer/.hats-shared` → `../shared`
-- `designer/.hats-manager` → `../manager`
+**`.hats/designer/`**
+- `.hats/designer/.hats-shared` → `../shared`
+- `.hats/designer/.hats-manager` → `../manager`
 
-**cto/**
-- `cto/.hats-shared` → `../shared`
-- `cto/.hats-manager` → `../manager`
-- `cto/.hats-designer` → `../designer`
+**`.hats/cto/`**
+- `.hats/cto/.hats-shared` → `../shared`
+- `.hats/cto/.hats-manager` → `../manager`
+- `.hats/cto/.hats-designer` → `../designer`
 
-**qa/**
-- `qa/.hats-shared` → `../shared`
-- `qa/.hats-manager` → `../manager`
+**`.hats/qa/`**
+- `.hats/qa/.hats-shared` → `../shared`
+- `.hats/qa/.hats-manager` → `../manager`
 
-**developer/**
-- `developer/.hats-shared` → `../shared`
-- `developer/.hats-manager` → `../manager`
-- `developer/.hats-designer` → `../designer`
+### Messaging files in `.hats/shared/`
 
-### Messaging files in `shared/`
-
-- `shared/manager2team.md` exists (create empty if missing)
-- `shared/cto2team.md` exists (create empty if missing)
-- `shared/qa2dev.md` exists (create empty if missing)
-- `shared/dev2qa.md` exists (create empty if missing)
-- `shared/dev2designer.md` exists (create empty if missing)
-- `shared/qa2designer.md` exists (create empty if missing)
-- `shared/designer2team.md` exists (create empty if missing)
+- `.hats/shared/manager2team.md` exists (create empty if missing)
+- `.hats/shared/cto2team.md` exists (create empty if missing)
+- `.hats/shared/qa2dev.md` exists (create empty if missing)
+- `.hats/shared/dev2qa.md` exists (create empty if missing)
+- `.hats/shared/dev2designer.md` exists (create empty if missing)
+- `.hats/shared/qa2designer.md` exists (create empty if missing)
+- `.hats/shared/designer2team.md` exists (create empty if missing)
 
 ### Files
 
-- `status.json` exists and contains `messages` key (add default messaging structure if missing)
+- `.hats/status.json` exists and contains `messages` key (add default messaging structure if missing)
 
 ### .gitignore
 
@@ -69,23 +63,22 @@ Print all findings as a checklist, for example:
 ## Hats Doctor
 
 Directories:
-  [ok]      manager/
-  [ok]      designer/
-  [missing] cto/
-  [ok]      shared/
-  [ok]      developer/
-  [ok]      qa/
+  [ok]      .hats/manager/
+  [ok]      .hats/designer/
+  [missing] .hats/cto/
+  [ok]      .hats/shared/
+  [ok]      .hats/qa/
 
 Symlinks:
-  [ok]      manager/.hats-shared → ../shared
-  [ok]      manager/.hats-designer → ../designer
-  [missing] cto/.hats-shared → ../shared
-  [missing] cto/.hats-manager → ../manager
-  [missing] cto/.hats-designer → ../designer
+  [ok]      .hats/manager/.hats-shared → ../shared
+  [ok]      .hats/manager/.hats-designer → ../designer
+  [missing] .hats/cto/.hats-shared → ../shared
+  [missing] .hats/cto/.hats-manager → ../manager
+  [missing] .hats/cto/.hats-designer → ../designer
   ...
 
 Files:
-  [ok]      status.json
+  [ok]      .hats/status.json
 
 Gitignore:
   [missing] .hats-role entry
@@ -104,24 +97,21 @@ Only after user confirms:
 - Create missing directories
 - Recreate missing or broken symlinks using `ln -sfn`:
   ```bash
-  ln -sfn ../shared manager/.hats-shared
-  ln -sfn ../designer manager/.hats-designer
-  ln -sfn ../shared designer/.hats-shared
-  ln -sfn ../manager designer/.hats-manager
-  ln -sfn ../shared cto/.hats-shared
-  ln -sfn ../manager cto/.hats-manager
-  ln -sfn ../designer cto/.hats-designer
-  ln -sfn ../shared qa/.hats-shared
-  ln -sfn ../manager qa/.hats-manager
-  ln -sfn ../shared developer/.hats-shared
-  ln -sfn ../manager developer/.hats-manager
-  ln -sfn ../designer developer/.hats-designer
+  ln -sfn ../shared .hats/manager/.hats-shared
+  ln -sfn ../designer .hats/manager/.hats-designer
+  ln -sfn ../shared .hats/designer/.hats-shared
+  ln -sfn ../manager .hats/designer/.hats-manager
+  ln -sfn ../shared .hats/cto/.hats-shared
+  ln -sfn ../manager .hats/cto/.hats-manager
+  ln -sfn ../designer .hats/cto/.hats-designer
+  ln -sfn ../shared .hats/qa/.hats-shared
+  ln -sfn ../manager .hats/qa/.hats-manager
   ```
-- Create missing `status.json` with `{}`
+- Create missing `.hats/status.json` with `{}`
 - Append `.hats-role` to `.gitignore` if missing
 
 ## Rules
 
 - NEVER delete existing files or directories
-- NEVER overwrite `status.json` if it already exists
+- NEVER overwrite `.hats/status.json` if it already exists
 - Only fix what the user confirmed

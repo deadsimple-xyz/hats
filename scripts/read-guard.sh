@@ -32,11 +32,11 @@ fi
 
 # Per-role read restrictions
 case "$ROLE" in
-  manager)   BLOCKED="developer/ qa/" ;;
-  designer)  BLOCKED="developer/ qa/" ;;
-  cto)       BLOCKED="developer/ qa/" ;;
-  qa)        BLOCKED="developer/" ;;
-  developer) BLOCKED="qa/" ;;
+  manager)   BLOCKED=".hats/qa/" ;;
+  designer)  BLOCKED=".hats/qa/" ;;
+  cto)       BLOCKED=".hats/qa/" ;;
+  qa)        BLOCKED="" ;;
+  developer) BLOCKED=".hats/qa/" ;;
   *) exit 0 ;;
 esac
 
