@@ -1,6 +1,6 @@
 {
   "name": "hats",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "BDD-driven AI dev team. Five roles: Manager, Designer, CTO, QA, Developer.",
   "author": {
     "name": "deadsimple"

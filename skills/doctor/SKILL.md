@@ -4,6 +4,8 @@ description: Diagnose and fix a Hats project structure (missing dirs, symlinks, 
 
 # Doctor
 
+Read `MIGRATIONS.md` for the full list of version-specific changes. The checks below reflect the current version (2.0.0).
+
 ## Step 1: Check everything
 
 Inspect the project root and print a checklist report. Mark each item as **ok**, **missing**, or **broken** (symlink exists but points to wrong target).

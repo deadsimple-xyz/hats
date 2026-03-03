@@ -11,7 +11,7 @@
         "repo": "deadsimple-xyz/hats"
       },
       "description": "BDD-driven AI dev team. Five roles: Manager, Designer, CTO, QA, Developer.",
-      "version": "1.0.0",
+      "version": "2.0.0",
       "license": "MIT",
       "keywords": ["bdd", "gherkin", "agents", "roles", "tdd"]
     }
