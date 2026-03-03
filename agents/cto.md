@@ -61,6 +61,8 @@ Write the following files based on the plan below:
 [INSERT YOUR PLAN HERE]
 
 Rules:
+- Use the Write tool to create files and the Edit tool to modify them. NEVER use Bash (cat, heredoc, echo, sed) for file operations.
+- Use the Read tool to read files. NEVER use cat/head/tail.
 - Write stack decisions to .hats-shared/stack.md
 - Write setup instructions to .hats-shared/setup.md
 - Optionally write API conventions to .hats-shared/api.md

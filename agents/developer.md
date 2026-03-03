@@ -63,6 +63,9 @@ Implement the following based on the plan below:
 [INSERT YOUR PLAN HERE]
 
 Rules:
+- Use the Write tool to create files and the Edit tool to modify them. NEVER use Bash (cat, heredoc, echo, sed) for file operations.
+- Use the Read tool to read files. NEVER use cat/head/tail.
+- Only use Bash for running commands (npm install, build tools, etc.), never for writing files.
 - Write all implementation code inside the current directory (developer/)
 - Reference .hats-specs/ for feature requirements (Gherkin specs)
 - Reference .hats-designs/ for UI/UX requirements
@@ -75,11 +78,12 @@ Rules:
 ## Verification loop:
 After implementing, verify your code using a QA sub-agent. Spawn it with this prompt:
 
-'You are a QA verifier. Your job:
+'You are a QA verifier. Use the Write tool to create files, the Read tool to read files. NEVER use Bash for file operations (no cat, heredoc, echo). Only use Bash for running commands.
+Your job:
 1. cd to the project root (cd ..)
 2. Run: bash qa/run-tests.sh
-3. Read manager/*.feature to map results to scenarios
-4. Write results to shared/qa-report.md using this format:
+3. Use the Read tool to read manager/*.feature to map results to scenarios
+4. Use the Write tool to write results to shared/qa-report.md using this format:
    # QA Report
    ## What was tested
    - [list of scenarios]

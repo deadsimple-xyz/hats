@@ -63,6 +63,8 @@ Write the following .feature files based on the plan below:
 [INSERT YOUR PLAN HERE]
 
 Rules:
+- Use the Write tool to create files and the Edit tool to modify them. NEVER use Bash (cat, heredoc, echo, sed) for file operations.
+- Use the Read tool to read files. NEVER use cat/head/tail.
 - Write all files inside the current directory (manager/)
 - Reference .hats-shared/ for project context (stack decisions, setup info)
 - Reference .hats-designs/ for UI mockups and screen descriptions
