@@ -4,7 +4,7 @@ description: Diagnose and fix a Hats project structure (missing dirs, symlinks, 
 
 # Doctor
 
-Read `MIGRATIONS.md` for the full list of version-specific changes. The checks below reflect the current version (2.0.0).
+Read `MIGRATIONS.md` for the full list of version-specific changes. The checks below reflect the current version (2.1.0).
 
 ## Step 1: Check everything
 
@@ -43,9 +43,18 @@ Inspect the project root and print a checklist report. Mark each item as **ok**,
 - `developer/.hats-specs` → `../manager`
 - `developer/.hats-designs` → `../designer`
 
+### Messaging files in `shared/`
+
+- `shared/manager2team.md` exists (create empty if missing)
+- `shared/qa2dev.md` exists (create empty if missing)
+- `shared/dev2qa.md` exists (create empty if missing)
+- `shared/dev2designer.md` exists (create empty if missing)
+- `shared/qa2designer.md` exists (create empty if missing)
+- `shared/designer2team.md` exists (create empty if missing)
+
 ### Files
 
-- `status.json` exists (any content is fine)
+- `status.json` exists and contains `messages` key (add default messaging structure if missing)
 
 ### .gitignore
 

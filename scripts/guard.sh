@@ -30,8 +30,26 @@ fi
 
 # Per-role write restrictions
 case "$ROLE" in
-  manager)  BLOCKED="designer/ shared/ developer/ qa/" ;;
-  designer) BLOCKED="manager/ shared/ developer/ qa/" ;;
+  manager)  BLOCKED="designer/ developer/ qa/"
+            # manager CAN write manager2team.md in shared/ but nothing else
+            if echo "$FILE_PATH" | grep -q "shared/"; then
+              BASENAME=$(basename "$FILE_PATH")
+              case "$BASENAME" in
+                manager2team.md) ;;  # allowed
+                *) echo "Blocked: Manager can only write manager2team.md in shared/" >&2
+                   exit 2 ;;
+              esac
+            fi ;;
+  designer) BLOCKED="manager/ developer/ qa/"
+            # designer CAN write designer2team.md in shared/ but nothing else
+            if echo "$FILE_PATH" | grep -q "shared/"; then
+              BASENAME=$(basename "$FILE_PATH")
+              case "$BASENAME" in
+                designer2team.md) ;;  # allowed
+                *) echo "Blocked: Designer can only write designer2team.md in shared/" >&2
+                   exit 2 ;;
+              esac
+            fi ;;
   cto)      BLOCKED="manager/ designer/ developer/ qa/"
             # cto CAN write stack.md, setup.md, api.md in shared/ but nothing else
             if echo "$FILE_PATH" | grep -q "shared/"; then
@@ -43,21 +61,22 @@ case "$ROLE" in
               esac
             fi ;;
   qa)       BLOCKED="manager/ designer/ developer/"
-            # qa CAN write shared/qa-report.md but nothing else in shared/
-            if echo "$FILE_PATH" | grep -q "shared/"; then
-              BASENAME=$(basename "$FILE_PATH")
-              if [ "$BASENAME" != "qa-report.md" ]; then
-                echo "Blocked: QA can only write shared/qa-report.md" >&2
-                exit 2
-              fi
-            fi ;;
-  developer) BLOCKED="manager/ designer/ qa/"
-            # developer CAN write setup.md, api.md in shared/ but nothing else
+            # qa CAN write qa-report.md, qa2dev.md in shared/ but nothing else
             if echo "$FILE_PATH" | grep -q "shared/"; then
               BASENAME=$(basename "$FILE_PATH")
               case "$BASENAME" in
-                setup.md|api.md) ;;  # allowed
-                *) echo "Blocked: Developer can only write setup.md, api.md in shared/" >&2
+                qa-report.md|qa2dev.md|qa2designer.md) ;;  # allowed
+                *) echo "Blocked: QA can only write qa-report.md, qa2dev.md, qa2designer.md in shared/" >&2
+                   exit 2 ;;
+              esac
+            fi ;;
+  developer) BLOCKED="manager/ designer/ qa/"
+            # developer CAN write setup.md, api.md, dev2qa.md in shared/ but nothing else
+            if echo "$FILE_PATH" | grep -q "shared/"; then
+              BASENAME=$(basename "$FILE_PATH")
+              case "$BASENAME" in
+                setup.md|api.md|dev2qa.md|dev2designer.md) ;;  # allowed
+                *) echo "Blocked: Developer can only write setup.md, api.md, dev2qa.md, dev2designer.md in shared/" >&2
                    exit 2 ;;
               esac
             fi ;;

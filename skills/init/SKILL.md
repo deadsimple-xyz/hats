@@ -26,7 +26,13 @@ Create the missing directories and files (do NOT overwrite existing files):
 - `shared/`
 - `developer/`
 - `qa/`
-- `status.json` (with `{}`)
+- `shared/manager2team.md` (empty)
+- `shared/qa2dev.md` (empty)
+- `shared/dev2qa.md` (empty)
+- `shared/dev2designer.md` (empty)
+- `shared/qa2designer.md` (empty)
+- `shared/designer2team.md` (empty)
+- `status.json` (with default messaging structure — see MIGRATIONS.md for the full `messages` schema)
 - `.gitignore` (append if exists, create if not):
   ```
   node_modules/
