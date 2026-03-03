@@ -2,6 +2,56 @@
 
 The doctor reads this file to upgrade old Hats projects.
 
+## 2.2.0 → 2.3.0
+
+### Symlink renames
+
+Old names are removed; recreate with new names:
+
+**manager/**
+- `.hats-designs` → renamed to `.hats-designer`
+
+**designer/**
+- `.hats-specs` → renamed to `.hats-manager`
+
+**cto/**
+- `.hats-specs` → renamed to `.hats-manager`
+- `.hats-designs` → renamed to `.hats-designer`
+
+**qa/**
+- `.hats-specs` → renamed to `.hats-manager`
+
+**developer/**
+- `.hats-specs` → renamed to `.hats-manager`
+- `.hats-designs` → renamed to `.hats-designer`
+
+To fix: remove old symlinks and recreate:
+```bash
+rm manager/.hats-designs designer/.hats-specs cto/.hats-specs cto/.hats-designs qa/.hats-specs developer/.hats-specs developer/.hats-designs
+ln -sfn ../designer manager/.hats-designer
+ln -sfn ../manager designer/.hats-manager
+ln -sfn ../manager cto/.hats-manager
+ln -sfn ../designer cto/.hats-designer
+ln -sfn ../manager qa/.hats-manager
+ln -sfn ../manager developer/.hats-manager
+ln -sfn ../designer developer/.hats-designer
+```
+
+## 2.1.0 → 2.2.0
+
+### New file in `shared/`
+- `shared/cto2team.md` -- CTO → team stack announcements (create empty if missing)
+
+### `status.json`
+Add `cto2team` channel to `messages` key:
+```json
+{
+  "messages": {
+    "cto2team": { "count": 0, "read_by": { "manager": 0, "designer": 0, "qa": 0, "developer": 0 } }
+  }
+}
+```
+
 ## 2.0.0 → 2.1.0
 
 ### New files in `shared/`

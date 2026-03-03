@@ -27,6 +27,7 @@ Create the missing directories and files (do NOT overwrite existing files):
 - `developer/`
 - `qa/`
 - `shared/manager2team.md` (empty)
+- `shared/cto2team.md` (empty)
 - `shared/qa2dev.md` (empty)
 - `shared/dev2qa.md` (empty)
 - `shared/dev2designer.md` (empty)
@@ -50,33 +51,33 @@ Create `.hats-*` symlinks in each role's folder. These give each role access to 
 **manager/**
 ```bash
 ln -sfn ../shared manager/.hats-shared
-ln -sfn ../designer manager/.hats-designs
+ln -sfn ../designer manager/.hats-designer
 ```
 
 **designer/**
 ```bash
 ln -sfn ../shared designer/.hats-shared
-ln -sfn ../manager designer/.hats-specs
+ln -sfn ../manager designer/.hats-manager
 ```
 
 **cto/**
 ```bash
 ln -sfn ../shared cto/.hats-shared
-ln -sfn ../manager cto/.hats-specs
-ln -sfn ../designer cto/.hats-designs
+ln -sfn ../manager cto/.hats-manager
+ln -sfn ../designer cto/.hats-designer
 ```
 
 **qa/**
 ```bash
 ln -sfn ../shared qa/.hats-shared
-ln -sfn ../manager qa/.hats-specs
+ln -sfn ../manager qa/.hats-manager
 ```
 
 **developer/**
 ```bash
 ln -sfn ../shared developer/.hats-shared
-ln -sfn ../manager developer/.hats-specs
-ln -sfn ../designer developer/.hats-designs
+ln -sfn ../manager developer/.hats-manager
+ln -sfn ../designer developer/.hats-designer
 ```
 
 ## Step 4: Generate specs from existing code

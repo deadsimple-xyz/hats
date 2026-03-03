@@ -4,7 +4,7 @@ description: Diagnose and fix a Hats project structure (missing dirs, symlinks, 
 
 # Doctor
 
-Read `MIGRATIONS.md` for the full list of version-specific changes. The checks below reflect the current version (2.1.0).
+Read `MIGRATIONS.md` for the full list of version-specific changes. The checks below reflect the current version (2.3.0).
 
 ## Step 1: Check everything
 
@@ -23,29 +23,30 @@ Inspect the project root and print a checklist report. Mark each item as **ok**,
 
 **manager/**
 - `manager/.hats-shared` → `../shared`
-- `manager/.hats-designs` → `../designer`
+- `manager/.hats-designer` → `../designer`
 
 **designer/**
 - `designer/.hats-shared` → `../shared`
-- `designer/.hats-specs` → `../manager`
+- `designer/.hats-manager` → `../manager`
 
 **cto/**
 - `cto/.hats-shared` → `../shared`
-- `cto/.hats-specs` → `../manager`
-- `cto/.hats-designs` → `../designer`
+- `cto/.hats-manager` → `../manager`
+- `cto/.hats-designer` → `../designer`
 
 **qa/**
 - `qa/.hats-shared` → `../shared`
-- `qa/.hats-specs` → `../manager`
+- `qa/.hats-manager` → `../manager`
 
 **developer/**
 - `developer/.hats-shared` → `../shared`
-- `developer/.hats-specs` → `../manager`
-- `developer/.hats-designs` → `../designer`
+- `developer/.hats-manager` → `../manager`
+- `developer/.hats-designer` → `../designer`
 
 ### Messaging files in `shared/`
 
 - `shared/manager2team.md` exists (create empty if missing)
+- `shared/cto2team.md` exists (create empty if missing)
 - `shared/qa2dev.md` exists (create empty if missing)
 - `shared/dev2qa.md` exists (create empty if missing)
 - `shared/dev2designer.md` exists (create empty if missing)
@@ -77,10 +78,10 @@ Directories:
 
 Symlinks:
   [ok]      manager/.hats-shared → ../shared
-  [ok]      manager/.hats-designs → ../designer
+  [ok]      manager/.hats-designer → ../designer
   [missing] cto/.hats-shared → ../shared
-  [missing] cto/.hats-specs → ../manager
-  [missing] cto/.hats-designs → ../designer
+  [missing] cto/.hats-manager → ../manager
+  [missing] cto/.hats-designer → ../designer
   ...
 
 Files:
@@ -104,17 +105,17 @@ Only after user confirms:
 - Recreate missing or broken symlinks using `ln -sfn`:
   ```bash
   ln -sfn ../shared manager/.hats-shared
-  ln -sfn ../designer manager/.hats-designs
+  ln -sfn ../designer manager/.hats-designer
   ln -sfn ../shared designer/.hats-shared
-  ln -sfn ../manager designer/.hats-specs
+  ln -sfn ../manager designer/.hats-manager
   ln -sfn ../shared cto/.hats-shared
-  ln -sfn ../manager cto/.hats-specs
-  ln -sfn ../designer cto/.hats-designs
+  ln -sfn ../manager cto/.hats-manager
+  ln -sfn ../designer cto/.hats-designer
   ln -sfn ../shared qa/.hats-shared
-  ln -sfn ../manager qa/.hats-specs
+  ln -sfn ../manager qa/.hats-manager
   ln -sfn ../shared developer/.hats-shared
-  ln -sfn ../manager developer/.hats-specs
-  ln -sfn ../designer developer/.hats-designs
+  ln -sfn ../manager developer/.hats-manager
+  ln -sfn ../designer developer/.hats-designer
   ```
 - Create missing `status.json` with `{}`
 - Append `.hats-role` to `.gitignore` if missing

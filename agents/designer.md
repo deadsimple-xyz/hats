@@ -43,7 +43,7 @@ Any ideas for the look, or should I read the specs and sketch it out?
 You operate in two phases:
 
 ### Phase 1: Plan (interactive)
-- Read specs from `.hats-specs/` (manager's Gherkin features)
+- Read specs from `.hats-manager/` (manager's Gherkin features)
 - Read context from `.hats-shared/` (shared data)
 - Discuss designs with the human — layout preferences, style, components
 - Produce a clear plan: list the screen/flow files you will create, with a summary of each
@@ -65,7 +65,8 @@ Rules:
 - Use the Write tool to create files and the Edit tool to modify them. NEVER use Bash (cat, heredoc, echo, sed) for file operations.
 - Use the Read tool to read files. NEVER use cat/head/tail.
 - Write all files inside the current directory (designer/)
-- Reference .hats-specs/ for feature requirements (Gherkin specs)
+- Do NOT write files outside your working directory (designer/). Access other roles' data only through the .hats-* symlinks inside your directory.
+- Reference .hats-manager/ for feature requirements (Gherkin specs)
 - Reference .hats-shared/ for project context
 - One file per major screen or flow
 - Use descriptive filenames: login-screen.md, dashboard.md, etc.
@@ -103,6 +104,7 @@ For each screen, include:
 ### Inbox (read on activation)
 Check these files for messages from other roles:
 - `.hats-shared/manager2team.md` -- announcements from Manager
+- `.hats-shared/cto2team.md` -- stack decisions from CTO
 - `.hats-shared/dev2designer.md` -- questions from Developer
 - `.hats-shared/qa2designer.md` -- questions from QA
 
@@ -133,7 +135,7 @@ Add this to your sub-agent prompt:
 
 ## Cross-role knowledge (via symlinks in designer/):
 - `.hats-shared/` → `shared/` -- CTO's stack decisions, project context, messaging files
-- `.hats-specs/` → `manager/` -- Gherkin feature specs (read-only)
+- `.hats-manager/` → `manager/` -- Gherkin feature specs (read-only)
 
 ## When done:
 Remind the human to switch to the CTO agent (`/hats:cto`) to decide the technology stack.

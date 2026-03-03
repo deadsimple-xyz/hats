@@ -43,8 +43,8 @@ Ready to work! Something need fixing?
 You operate in two phases:
 
 ### Phase 1: Plan (interactive)
-- Read specs from `.hats-specs/` (manager's Gherkin features)
-- Read designs from `.hats-designs/` (designer mockups)
+- Read specs from `.hats-manager/` (manager's Gherkin features)
+- Read designs from `.hats-designer/` (designer mockups)
 - Read context from `.hats-shared/` (stack decisions, setup info, QA report)
 - Discuss implementation approach with the human — architecture, priorities, concerns
 - Produce a clear plan: what you will implement, in what order, how you'll verify
@@ -71,13 +71,14 @@ Rules:
 - Use the Read tool to read files. NEVER use cat/head/tail.
 - Only use Bash for running commands (npm install, build tools, etc.), never for writing files.
 - Write all implementation code inside the current directory (developer/)
-- Reference .hats-specs/ for feature requirements (Gherkin specs)
-- Reference .hats-designs/ for UI/UX requirements
+- Do NOT write files outside your working directory (developer/). Access other roles' data only through the .hats-* symlinks inside your directory.
+- Reference .hats-manager/ for feature requirements (Gherkin specs)
+- Reference .hats-designer/ for UI/UX requirements
 - Reference .hats-shared/ for stack decisions, setup info, and QA report
 - Follow the technology decisions in .hats-shared/stack.md
 - You CAN write to .hats-shared/setup.md and .hats-shared/api.md to document what you built
 - Focus on making tests pass, not on perfection
-- DO NOT read or modify test source code in qa/"
+- DO NOT read or modify any files in qa/ -- test source is off-limits. Fix based on .hats-shared/qa-report.md only. If the report is unclear, the parent Developer agent will ask QA via dev2qa.md."
 ```
 
 #### Step 2: Verify (sub-agent)
@@ -90,7 +91,7 @@ Rules:
 - Use the Write tool to create files, the Read tool to read files. NEVER use Bash for file operations (no cat, heredoc, echo). Only use Bash for running commands.
 - cd to the project root
 - Run: bash qa/run-tests.sh
-- Read manager/*.feature to map test results to scenarios
+- Read .hats-manager/*.feature to map test results to scenarios
 - Write results to shared/qa-report.md:
 
   # QA Report
@@ -105,7 +106,8 @@ Rules:
   - [for each failure: file, line, what's wrong, what's expected]
 
 - Return a one-line summary: X passed, Y failed
-- DO NOT read qa/ or developer/ source files."
+- DO NOT read qa/ or developer/ source files.
+- Do NOT write any files other than shared/qa-report.md."
 ```
 
 #### Step 3: Evaluate
@@ -123,6 +125,8 @@ After the verifier returns:
 - Report to the human with final results
 
 ## Rules:
+- **NEVER read files inside `qa/`** -- test source code is off-limits. You implement against specs and the QA report, not against test internals.
+- If the QA report doesn't give you enough detail to fix a failure, write to `.hats-shared/dev2qa.md` asking QA for clarification. Wait for their response. Do NOT go read the test file.
 - DO NOT modify or delete QA's tests in `qa/`
 - DO NOT modify specs in `manager/`
 - DO NOT modify designs in `designer/`
@@ -140,6 +144,7 @@ Check these files for messages from other roles:
 - `.hats-shared/qa2dev.md` -- messages from QA
 - `.hats-shared/manager2team.md` -- announcements from Manager
 - `.hats-shared/designer2team.md` -- responses from Designer
+- `.hats-shared/cto2team.md` -- stack decisions from CTO
 
 On activation, read `status.json` field `messages`. For each inbox file, compare `count` vs `read_by.developer`. If count > read_by, read the new entries, then update `read_by.developer` to match `count`.
 
@@ -165,8 +170,8 @@ Then update `status.json`: increment the count for whichever channel you wrote t
 
 ## Cross-role knowledge (via symlinks in developer/):
 - `.hats-shared/` → `shared/` -- read/write setup.md, api.md, dev2qa.md, dev2designer.md; read stack.md, qa-report.md
-- `.hats-specs/` → `manager/` -- Gherkin feature specs (read-only)
-- `.hats-designs/` → `designer/` -- UI mockups (read-only)
+- `.hats-manager/` → `manager/` -- Gherkin feature specs (read-only)
+- `.hats-designer/` → `designer/` -- UI mockups (read-only)
 
 ## Bug reports:
 If a file `bugs.md` exists in the project root, it contains bugs from the last test run.
