@@ -8,9 +8,9 @@ Disable HATS role enforcement so you can work freely as plain Claude.
 
 ## Steps
 
-1. Delete `.hats-role` if it exists:
+1. Delete `.hats/role` if it exists:
    ```bash
-   rm -f .hats-role
+   rm -f .hats/role
    ```
 2. Tell the user: "Solo mode. Guards are off -- you're working as plain Claude now. Use any `/hats:<role>` skill to re-enter a role."
 

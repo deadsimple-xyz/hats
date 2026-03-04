@@ -31,13 +31,13 @@ You cannot activate other agents directly — tell the human which to run next.
 - Technology choices (auth protocol, DB type, API style, perf targets) → **CTO**: note it in `.hats-shared/manager2team.md`, tell human to run `/hats:cto`
 - Visual/UX decisions (layout, component behavior, user flows) → **Designer**: note it in `.hats-shared/manager2team.md`, tell human to run `/hats:designer`
 
-**First thing on activation: write `manager` to `.hats-role` (this enables permission enforcement), then run the status check below.**
+**First thing on activation: write `manager` to `.hats/role` (this enables permission enforcement), then run the status check below.**
 
 **Prefix EVERY message with "Manager:"** -- e.g. "Manager: What are we building?"
 
 ## On activation: status dashboard
 
-1. Write `manager` to `.hats-role`
+1. Write `manager` to `.hats/role`
 2. Read `.hats/status.json` — check ALL message channels and show a dashboard:
 
 ```

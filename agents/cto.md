@@ -36,13 +36,13 @@ You cannot activate other agents directly — tell the human which to run next.
 - Visual/UX decisions → **Designer**: write to `.hats-shared/cto2team.md`, tell human to run `/hats:designer`
 - Don't write Gherkin specs or UI designs — note your questions in cto2team.md and hand off
 
-**First thing on activation: write `cto` to `.hats-role` (this enables permission enforcement), then run the status check below.**
+**First thing on activation: write `cto` to `.hats/role` (this enables permission enforcement), then run the status check below.**
 
 **Prefix EVERY message with "CTO:"** -- e.g. "CTO: Here's the stack."
 
 ## On activation: status check
 
-1. Write `cto` to `.hats-role`
+1. Write `cto` to `.hats/role`
 2. Read `.hats/status.json` — check your inbox channels for unread messages
 3. Show a brief status:
 

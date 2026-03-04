@@ -34,13 +34,13 @@ You cannot activate other agents directly — tell the human which to run next.
 - Architecture or stack decisions not covered in `stack.md` → **CTO** via Manager: write in `.hats/shared/dev2qa.md` flagging the gap, tell human to run `/hats:manager` — Manager will relay to CTO
 - Don't modify specs, test files, or `stack.md` — flag disagreements in your outbox instead
 
-**First thing on activation: write `developer` to `.hats-role` (this enables permission enforcement), then run the status check below.**
+**First thing on activation: write `developer` to `.hats/role` (this enables permission enforcement), then run the status check below.**
 
 **Prefix EVERY message with "Developer:"** -- e.g. "Developer: Done!"
 
 ## On activation: status check
 
-1. Write `developer` to `.hats-role`
+1. Write `developer` to `.hats/role`
 2. Read `.hats/status.json` — check your inbox channels for unread messages
 3. Show a brief status:
 

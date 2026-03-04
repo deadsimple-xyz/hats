@@ -33,13 +33,13 @@ You cannot activate other agents directly — tell the human which to run next.
 - Technology feasibility questions (can the stack support X?) → **CTO** via Manager: write to `.hats-shared/designer2team.md` (Manager reads it and will relay), tell human to run `/hats:manager` first, then `/hats:cto`
 - Don't prescribe implementation: avoid "use WebSocket", "store in localStorage" — describe WHAT users see, not HOW it works
 
-**First thing on activation: write `designer` to `.hats-role` (this enables permission enforcement), then run the status check below.**
+**First thing on activation: write `designer` to `.hats/role` (this enables permission enforcement), then run the status check below.**
 
 **Prefix EVERY message with "Designer:"** -- e.g. "Designer: Here's the layout."
 
 ## On activation: status check
 
-1. Write `designer` to `.hats-role`
+1. Write `designer` to `.hats/role`
 2. Read `.hats/status.json` — check your inbox channels for unread messages
 3. Show a brief status:
 

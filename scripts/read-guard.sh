@@ -1,15 +1,16 @@
 #!/bin/bash
 # Blocks Read/Glob/Grep to directories the current role cannot access.
-# Called from hooks/hooks.json. Reads .hats-role for the active agent.
+# Called from hooks/hooks.json. Reads .hats/role for the active agent.
 
 INPUT=$(cat)
 
-ROLE_FILE=".hats-role"
+ROLE_FILE=".hats/role"
 if [ ! -f "$ROLE_FILE" ]; then
   exit 0
 fi
 
 ROLE=$(cat "$ROLE_FILE")
+TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty')
 
 # Read uses file_path, Glob uses pattern/path, Grep uses path/pattern
 PATH_VAL=$(echo "$INPUT" | jq -r '
@@ -30,6 +31,16 @@ if [ -d "$PARENT" ]; then
   PATH_VAL="$(cd "$PARENT" && pwd -P)/$(basename "$PATH_VAL")"
 fi
 
+# Debug logging helper for blocked reads
+read_block() {
+  if [ -f ".hats/debug" ]; then
+    LOG_DIR=".hats/logs"; mkdir -p "$LOG_DIR"
+    echo "{\"ts\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"event\":\"read_block\",\"role\":\"$ROLE\",\"file\":\"$PATH_VAL\",\"tool\":\"$TOOL_NAME\",\"reason\":\"$1\"}" >> "$LOG_DIR/$(date -u +%Y-%m-%d).jsonl"
+  fi
+  echo "Blocked: $1" >&2
+  exit 2
+}
+
 # Per-role read restrictions
 case "$ROLE" in
   manager)   BLOCKED=".hats/qa/" ;;
@@ -42,8 +53,7 @@ esac
 
 for blocked in $BLOCKED; do
   if echo "$PATH_VAL" | grep -q "/${blocked}" || echo "$PATH_VAL" | grep -q "^${blocked}"; then
-    echo "Blocked: ${ROLE} cannot read ${blocked}" >&2
-    exit 2
+    read_block "${ROLE} cannot read ${blocked}"
   fi
 done
 

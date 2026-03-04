@@ -34,7 +34,8 @@ Create the missing directories and files (do NOT overwrite existing files):
   __pycache__/
   venv/
   .env
-  .hats-role
+  .hats/role
+  .hats/logs/
   *.log
   ```
 

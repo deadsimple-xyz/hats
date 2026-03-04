@@ -4,11 +4,13 @@ description: Diagnose and fix a Hats project structure (missing dirs, symlinks, 
 
 # Doctor
 
-Read `MIGRATIONS.md` for the full list of version-specific changes. The checks below reflect the current version (3.0.0).
+Read `MIGRATIONS.md` for the full list of version-specific changes. The checks below reflect the current version (3.1.0).
 
 ## Step 0: Detect old version and migrate
 
 Before running the normal check, detect whether the project is on an older version.
+
+**Detect v3.0.0 (pre-3.1.0):** check if `.hats-role` exists at the project root. If so, move it to `.hats/role`. Also check if `.gitignore` contains `.hats-role` — if so, replace with `.hats/role`.
 
 **Detect v2 (pre-3.0.0):** check if any of `manager/`, `designer/`, `cto/`, `shared/`, `qa/` exist at the project root (without the `.hats/` prefix) AND `.hats/` does not yet exist.
 
@@ -126,7 +128,8 @@ Inspect the project root and print a checklist report. Mark each item as **ok**,
 
 ### .gitignore
 
-- `.gitignore` contains the line `.hats-role`
+- `.gitignore` contains the line `.hats/role`
+- `.gitignore` contains the line `.hats/logs/`
 
 ## Step 2: Print the report
 
@@ -154,7 +157,7 @@ Files:
   [ok]      .hats/status.json
 
 Gitignore:
-  [missing] .hats-role entry
+  [missing] .hats/role entry
 ```
 
 If everything is ok, say "All good!" and stop.
@@ -181,7 +184,8 @@ Only after user confirms:
   ln -sfn ../manager .hats/qa/.hats-manager
   ```
 - Create missing `.hats/status.json` with `{}`
-- Append `.hats-role` to `.gitignore` if missing
+- Append `.hats/role` to `.gitignore` if missing
+- Append `.hats/logs/` to `.gitignore` if missing
 
 ## Rules
 

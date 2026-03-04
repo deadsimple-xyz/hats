@@ -2,6 +2,31 @@
 
 The doctor reads this file to upgrade old Hats projects.
 
+## 3.0.0 → 3.1.0
+
+### Role file moved
+
+`.hats-role` → `.hats/role` — the role activation file now lives inside `.hats/` with everything else.
+
+**Auto-migration (doctor handles this):**
+- If `.hats-role` exists at project root, move it to `.hats/role`
+- If `.gitignore` contains `.hats-role`, replace with `.hats/role`
+
+**Manual fix:**
+```bash
+[ -f .hats-role ] && mv .hats-role .hats/role
+sed -i '' 's/^\.hats-role$/.hats\/role/' .gitignore
+```
+
+### Debug logging (optional)
+
+Touch `.hats/debug` to enable JSONL debug logging to `.hats/logs/YYYY-MM-DD.jsonl`. Remove the file to disable. Zero overhead when off.
+
+### .gitignore
+
+- `.hats-role` → `.hats/role`
+- Add `.hats/logs/` (debug log output)
+
 ## 2.3.0 → 3.0.0
 
 ### Breaking: directory restructure
@@ -163,7 +188,7 @@ ln -sfn ../designer developer/.hats-designs
 ```
 
 ### .gitignore
-- Must contain `.hats-role`
+- Must contain `.hats/role`
 
 ### Files
 - `status.json` must exist (create with `{}` if missing)

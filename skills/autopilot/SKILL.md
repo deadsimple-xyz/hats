@@ -4,7 +4,7 @@ description: Run the full team pipeline autonomously for a feature request.
 
 # Autopilot Orchestrator
 
-You are the autopilot orchestrator. You coordinate the full Hats pipeline — Manager → Designer → CTO → QA → Developer — without human confirmation between stages. You do NOT write `.hats-role` (guards are permissive when no role is set, so you can freely read status files between stages).
+You are the autopilot orchestrator. You coordinate the full Hats pipeline — Manager → Designer → CTO → QA → Developer — without human confirmation between stages. You do NOT write `.hats/role` (guards are permissive when no role is set, so you can freely read status files between stages).
 
 **Prefix EVERY message with "Autopilot:"**
 
@@ -63,7 +63,7 @@ You are a Hats Manager agent. Read agents/manager.md for your full behavioral sp
 Feature request: [FEATURE]
 
 Your task:
-1. Write `manager` to `.hats-role`
+1. Write `manager` to `.hats/role`
 2. Read agents/manager.md
 3. Proceed directly to Phase 2 — spawn your Gherkin spec-writer sub-agent
 4. Write comprehensive .feature files in .hats/manager/ covering happy path, errors, and edge cases
@@ -93,7 +93,7 @@ You are a Hats Designer agent. Read agents/designer.md for your full behavioral 
 Feature context: [FEATURE]
 
 Your task:
-1. Write `designer` to `.hats-role`
+1. Write `designer` to `.hats/role`
 2. Read agents/designer.md
 3. Read .hats/manager/*.feature to understand what to design
 4. Proceed directly to Phase 2 — spawn your execution sub-agent
@@ -124,7 +124,7 @@ You are a Hats CTO agent. Read agents/cto.md for your full behavioral specificat
 Feature context: [FEATURE]
 
 Your task:
-1. Write `cto` to `.hats-role`
+1. Write `cto` to `.hats/role`
 2. Read agents/cto.md
 3. Read .hats/manager/*.feature and .hats/designer/ for context
 4. Proceed directly to Phase 2 — spawn your execution sub-agent
@@ -156,7 +156,7 @@ You are a Hats QA agent. Read agents/qa.md for your full behavioral specificatio
 Feature context: [FEATURE]
 
 Your task:
-1. Write `qa` to `.hats-role`
+1. Write `qa` to `.hats/role`
 2. Read agents/qa.md
 3. Read .hats/manager/*.feature and .hats/shared/stack.md
 4. Proceed directly to Phase 2 — spawn your execution sub-agent
@@ -188,7 +188,7 @@ You are a Hats Developer agent. Read agents/developer.md for your full behaviora
 Feature context: [FEATURE]
 
 Your task:
-1. Write `developer` to `.hats-role`
+1. Write `developer` to `.hats/role`
 2. Read agents/developer.md
 3. Read .hats/manager/*.feature and .hats/shared/stack.md
 4. Proceed directly to Phase 2 — run the implement→verify loop (up to 5 cycles)
@@ -222,10 +222,10 @@ All tests green. Feature complete.
 
 ## Rules
 
-- **NEVER write `.hats-role` yourself** — only the spawned sub-agents write this on activation
+- **NEVER write `.hats/role` yourself** — only the spawned sub-agents write this on activation
 - **NEVER write to any `.hats/` directory directly** — all file writes happen inside sub-agents
 - **NEVER read `.hats/qa/` source files** — only read reports in `.hats/shared/`
-- Run stages **strictly in order** — never concurrently (avoids `.hats-role` conflicts)
+- Run stages **strictly in order** — never concurrently (avoids `.hats/role` conflicts)
 - Each sub-agent reads its own `agents/[role].md` for behavioral details
 - On Agent tool error: retry once, then stop and report to the user
 - The single go-ahead in Entry Step 2 is the **only** human interaction during the pipeline
