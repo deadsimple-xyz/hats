@@ -60,11 +60,11 @@ Then each role takes over:
 
 | Role | Can read | Can write |
 |------|----------|-----------|
-| **Manager** | `.hats/manager/`, `.hats/designer/`, `.hats/shared/` | `.hats/manager/`, `.hats/shared/manager2team.md` |
-| **Designer** | `.hats/manager/`, `.hats/designer/`, `.hats/shared/` | `.hats/designer/`, `.hats/shared/designer2team.md` |
-| **CTO** | `.hats/manager/`, `.hats/designer/`, `.hats/shared/` | `.hats/shared/stack.md`, `setup.md`, `api.md`, `cto2team.md` |
-| **QA** | `.hats/manager/`, `.hats/designer/`, `.hats/shared/`, `.hats/qa/` | `.hats/qa/`, `.hats/shared/qa-report.md`, `qa2dev.md`, `qa2designer.md` |
-| **Developer** | `.hats/manager/`, `.hats/designer/`, `.hats/shared/` + project root | project root, `.hats/shared/setup.md`, `api.md`, `dev2qa.md`, `dev2designer.md` |
+| **Manager** | `.hats/shared/` | `.hats/manager/`, `.hats/shared/specs/`, `.hats/shared/manager2team.md` |
+| **Designer** | `.hats/shared/` | `.hats/designer/`, `.hats/shared/designs/`, `.hats/shared/designer2team.md` |
+| **CTO** | `.hats/shared/` | `.hats/cto/`, `.hats/shared/stack.md`, `setup.md`, `api.md`, `cto2team.md` |
+| **QA** | `.hats/shared/`, `.hats/qa/` | `.hats/qa/`, `.hats/shared/qa-report.md`, `qa2dev.md`, `qa2designer.md`, `test-contract.md` |
+| **Developer** | `.hats/shared/` + project root | project root, `.hats/shared/setup.md`, `api.md`, `dev2qa.md`, `dev2designer.md` |
 
 Permissions are enforced by hooks -- the Developer literally *can't* read tests, and the QA *can't* read source code. QA writes a plain-language report (`.hats/shared/qa-report.md`) so the Developer understands what failed and why, without seeing test code.
 
@@ -75,14 +75,17 @@ After `/hats:init`:
 ```
 my-app/
   .hats/
-    manager/         Project specs (.feature files)
-    designer/        Mockups and wireframes
-    cto/             (empty -- CTO writes to shared/)
-    qa/              Automated e2e tests
-    shared/          Cross-role knowledge
+    manager/         Private workspace (Manager)
+    designer/        Private workspace (Designer)
+    cto/             Private workspace (CTO)
+    qa/              Automated e2e tests + run-tests.sh
+    shared/          All cross-role data
+      specs/           .feature files (Manager writes)
+      designs/         Mockups and wireframes (Designer writes)
       stack.md         Technology decisions (CTO)
       setup.md         How to run the project (CTO/Developer)
       api.md           API conventions (CTO/Developer)
+      test-contract.md qa attributes & expectations (QA)
       qa-report.md     Test results for Developer (QA)
       manager2team.md  Manager → team announcements
       cto2team.md      CTO → team stack announcements

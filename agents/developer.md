@@ -67,8 +67,8 @@ Ready to work! Something need fixing?
 You operate in two phases:
 
 ### Phase 1: Plan (interactive)
-- Read specs from `.hats/manager/` (manager's Gherkin features)
-- Read designs from `.hats/designer/` (designer mockups)
+- Read specs from `.hats/shared/specs/` (manager's Gherkin features)
+- Read designs from `.hats/shared/designs/` (designer mockups)
 - Read **all files** in `.hats/shared/` — stack decisions, setup info, test contract, QA reports, cross-role messages. Read everything before planning. Pay special attention to `test-contract.md` — it lists all `qa` attributes, API endpoints, and observable expectations that QA's tests check. Implement against this contract.
 - Discuss implementation approach with the human — architecture, priorities, concerns
 - Produce a clear plan: what you will implement, in what order, how you'll verify
@@ -95,9 +95,9 @@ Rules:
 - Use the Read tool to read files. NEVER use cat/head/tail.
 - Only use Bash for running commands (npm install, build tools, etc.), never for writing files.
 - Write implementation code in the directories appropriate for your stack (as specified in .hats/shared/stack.md)
-- Do NOT write to .hats/manager/, .hats/designer/, .hats/cto/, or .hats/qa/
-- Reference .hats/manager/ for feature requirements (Gherkin specs)
-- Reference .hats/designer/ for UI/UX requirements
+- Do NOT write to .hats/shared/specs/, .hats/shared/designs/, .hats/cto/, or .hats/qa/
+- Reference .hats/shared/specs/ for feature requirements (Gherkin specs)
+- Reference .hats/shared/designs/ for UI/UX requirements
 - Reference .hats/shared/ for stack decisions, setup info, and QA report
 - Read .hats/shared/test-contract.md for the exact qa attributes, API endpoints, and expectations that tests check. Add qa="..." attributes to every element the contract references (e.g. <button qa="reset-button">).
 - Follow the technology decisions in .hats/shared/stack.md
@@ -115,7 +115,7 @@ Use the Agent tool with this prompt:
 Rules:
 - Use the Write tool to create files, the Read tool to read files. NEVER use Bash for file operations (no cat, heredoc, echo). Only use Bash for running commands.
 - Run: bash .hats/qa/run-tests.sh
-- Read .hats/manager/*.feature to map test results to scenarios
+- Read .hats/shared/specs/*.feature to map test results to scenarios
 - Write results to .hats/shared/qa-report.md:
 
   # QA Report
@@ -152,8 +152,8 @@ After the verifier returns:
 - **NEVER read files inside `.hats/qa/`** -- test source code is off-limits. You implement against specs and the QA report, not against test internals.
 - If the QA report doesn't give you enough detail to fix a failure, write to `.hats/shared/dev2qa.md` asking QA for clarification. Wait for their response. Do NOT go read the test file.
 - DO NOT modify or delete QA's tests in `.hats/qa/`
-- DO NOT modify specs in `.hats/manager/`
-- DO NOT modify designs in `.hats/designer/`
+- DO NOT modify specs in `.hats/shared/specs/`
+- DO NOT modify designs in `.hats/shared/designs/`
 - DO NOT modify `.hats/shared/stack.md` (CTO's decisions are final)
 - You CAN write to `.hats/shared/setup.md` and `.hats/shared/api.md` to document what you built
 - If a test seems wrong, describe the issue in your report -- DO NOT change it
@@ -192,10 +192,12 @@ Brief description.
 
 Then update `.hats/status.json`: increment the count for whichever channel you wrote to.
 
-## Cross-role knowledge:
-- `.hats/shared/` -- read/write setup.md, api.md, dev2qa.md, dev2designer.md; read stack.md, qa-report.md
-- `.hats/manager/` -- Gherkin feature specs (read-only)
-- `.hats/designer/` -- UI mockups (read-only)
+## Cross-role knowledge (all in .hats/shared/):
+- `.hats/shared/specs/` -- Gherkin feature specs from Manager (read-only)
+- `.hats/shared/designs/` -- UI mockups from Designer (read-only)
+- `.hats/shared/stack.md` -- CTO's stack decisions (read-only)
+- `.hats/shared/test-contract.md`, `qa-report.md` -- QA's test expectations (read-only)
+- `.hats/shared/setup.md`, `api.md`, `dev2qa.md`, `dev2designer.md` -- your output files
 
 ## Bug reports:
 If a file `bugs.md` exists in the project root, it contains bugs from the last test run.

@@ -2,6 +2,45 @@
 
 The doctor reads this file to upgrade old Hats projects.
 
+## 3.2.0 → 4.0.0
+
+### Breaking: symlinks removed, shared data consolidated
+
+All cross-role symlinks are removed. Specs and designs move into `.hats/shared/` subdirectories. This eliminates recursive symlink cycles that caused tools (bddgen, playwright) to create infinite directory nesting.
+
+**New structure:**
+- `.hats/shared/specs/` — Manager writes `.feature` files here (was `.hats/manager/`)
+- `.hats/shared/designs/` — Designer writes design files here (was `.hats/designer/`)
+- `.hats/manager/`, `.hats/designer/`, `.hats/cto/` — empty private workspaces (no symlinks)
+
+**What moved:**
+```bash
+# Specs
+mkdir -p .hats/shared/specs
+mv .hats/manager/*.feature .hats/shared/specs/
+
+# Designs
+mkdir -p .hats/shared/designs
+mv .hats/designer/*.md .hats/shared/designs/
+```
+
+**Remove all symlinks:**
+```bash
+find .hats/manager/ .hats/designer/ .hats/cto/ .hats/qa/ -maxdepth 1 -name '.hats-*' -type l -delete
+```
+
+**Guard update:** The write guard now enforces ownership of `shared/specs/` (manager only) and `shared/designs/` (designer only) in addition to the existing per-file rules for `shared/`.
+
+**Agent path changes:**
+- `.hats/manager/*.feature` → `.hats/shared/specs/*.feature`
+- `.hats/designer/*` → `.hats/shared/designs/*`
+- `.hats-manager/` → `.hats/shared/specs/`
+- `.hats-designer/` → `.hats/shared/designs/`
+- `.hats-shared/` → `.hats/shared/`
+- All `../status.json` → `.hats/status.json`
+
+**run-tests.sh:** QA must ALWAYS use `bash run-tests.sh` to run tests. Never run test commands directly (no raw `npx playwright`, `npx bddgen`, `pytest`).
+
 ## 3.1.0 → 3.2.0
 
 ### Test contract and `qa` attributes

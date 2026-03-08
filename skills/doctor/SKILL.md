@@ -4,18 +4,43 @@ description: Diagnose and fix a Hats project structure (missing dirs, symlinks, 
 
 # Doctor
 
-Read `MIGRATIONS.md` for the full list of version-specific changes. The checks below reflect the current version (3.1.0).
+Read `MIGRATIONS.md` for the full list of version-specific changes. The checks below reflect the current version (4.0.0).
 
 ## Step 0: Detect old version and migrate
 
 Before running the normal check, detect whether the project is on an older version.
 
-**Detect v3.1.0 (pre-3.2.0):** check if `.hats/qa/` has test files but `.hats/shared/test-contract.md` does not exist. If so, warn:
+**Detect v3.x (pre-4.0.0):** check if any `.hats-*` symlinks exist inside role directories (e.g. `.hats/manager/.hats-shared`, `.hats/qa/.hats-manager`), OR if `.hats/manager/*.feature` exists (specs should be in `shared/specs/`), OR if `.hats/designer/` has design files (designs should be in `shared/designs/`).
+
+If v3.x structure is found, report it and ask to migrate:
 ```
-Doctor: Found tests in .hats/qa/ but no test contract.
-Since v3.2.0, QA writes .hats/shared/test-contract.md listing all qa attributes and expectations.
-Run /hats:qa to generate the test contract and migrate selectors to qa="..." attributes.
+Doctor: Found a v3.x Hats project (symlinks in role dirs, specs in .hats/manager/).
+Migration to v4.0.0 will:
+  1. Move .hats/manager/*.feature → .hats/shared/specs/
+  2. Move .hats/designer/* (real files) → .hats/shared/designs/
+  3. Remove all .hats-* symlinks from role directories
+  4. Keep role directories as private workspaces
+
+Run migration now?
 ```
+
+Wait for confirmation. Then execute:
+
+```bash
+# 1. Create new subdirectories
+mkdir -p .hats/shared/specs .hats/shared/designs
+
+# 2. Move specs
+find .hats/manager/ -maxdepth 1 -name '*.feature' -exec mv {} .hats/shared/specs/ \;
+
+# 3. Move designs (real files only, not symlinks)
+find .hats/designer/ -maxdepth 1 -type f -exec mv {} .hats/shared/designs/ \;
+
+# 4. Remove all .hats-* symlinks from all role directories
+find .hats/manager/ .hats/designer/ .hats/cto/ .hats/qa/ -maxdepth 1 -name '.hats-*' -type l -delete
+```
+
+After migration completes, continue to Step 1 to verify.
 
 **Detect v3.0.0 (pre-3.1.0):** check if `.hats-role` exists at the project root. If so, move it to `.hats/role`. Also check if `.gitignore` contains `.hats-role` — if so, replace with `.hats/role`.
 
@@ -25,16 +50,15 @@ If old v2 directories are found, report it and ask to migrate:
 
 ```
 Doctor: Found a v2 Hats project (manager/, shared/, etc. at root).
-Migration to v3.0.0 will:
+Migration to v4.0.0 will:
   1. Move developer/* to project root (code no longer lives in developer/)
-  2. Create .hats/{manager,designer,cto,shared,qa}/
-  3. Move manager/*.feature → .hats/manager/
-  4. Move designer/* → .hats/designer/
+  2. Create .hats/{manager,designer,cto,shared,shared/specs,shared/designs,qa}/
+  3. Move manager/*.feature → .hats/shared/specs/
+  4. Move designer/* → .hats/shared/designs/
   5. Move qa/* → .hats/qa/
   6. Move shared/* → .hats/shared/
   7. Move status.json → .hats/status.json
-  8. Recreate symlinks in new locations
-  9. Remove old root-level Hats dirs (manager/, designer/, cto/, shared/, qa/, developer/)
+  8. Remove old root-level Hats dirs
 
 Run migration now?
 ```
@@ -43,46 +67,29 @@ Wait for confirmation. Then execute in order:
 
 **1. Move developer/ contents to project root** (if `developer/` exists and has files):
 ```bash
-# Move everything except symlinks and hidden files
 find developer/ -maxdepth 1 ! -name 'developer' ! -name '.*' -exec mv {} . \;
 ```
 Skip files that already exist at root — never overwrite.
 
 **2. Create new directories:**
 ```bash
-mkdir -p .hats/manager .hats/designer .hats/cto .hats/shared .hats/qa
+mkdir -p .hats/manager .hats/designer .hats/cto .hats/shared/specs .hats/shared/designs .hats/qa
 ```
 
 **3. Move files to new locations** (skip symlinks, only move real files):
 ```bash
-# .feature files from manager/
-find manager/ -maxdepth 1 -name '*.feature' -exec mv {} .hats/manager/ \;
-# all real files from designer/, qa/, shared/
-find designer/ -maxdepth 1 -type f -exec mv {} .hats/designer/ \;
+find manager/ -maxdepth 1 -name '*.feature' -exec mv {} .hats/shared/specs/ \;
+find designer/ -maxdepth 1 -type f -exec mv {} .hats/shared/designs/ \;
 find qa/ -maxdepth 1 -type f -exec mv {} .hats/qa/ \;
 find shared/ -maxdepth 1 -type f -exec mv {} .hats/shared/ \;
-# status.json
 [ -f status.json ] && mv status.json .hats/status.json
 ```
 
-**4. Recreate symlinks:**
-```bash
-ln -sfn ../shared .hats/manager/.hats-shared
-ln -sfn ../designer .hats/manager/.hats-designer
-ln -sfn ../shared .hats/designer/.hats-shared
-ln -sfn ../manager .hats/designer/.hats-manager
-ln -sfn ../shared .hats/cto/.hats-shared
-ln -sfn ../manager .hats/cto/.hats-manager
-ln -sfn ../designer .hats/cto/.hats-designer
-ln -sfn ../shared .hats/qa/.hats-shared
-ln -sfn ../manager .hats/qa/.hats-manager
-```
-
-**5. Remove old root-level dirs** (now empty after migration):
+**4. Remove old root-level dirs** (now empty after migration):
 ```bash
 rm -rf manager/ designer/ cto/ shared/ qa/ developer/
 ```
-Only remove dirs that are now empty (or contain only the old symlinks). If a dir still has files (e.g., because a file was skipped to avoid overwriting), warn the user instead of deleting.
+Only remove dirs that are now empty (or contain only the old symlinks). If a dir still has files, warn the user instead of deleting.
 
 After migration completes, continue to Step 1 to verify the new structure is correct.
 
@@ -90,34 +97,21 @@ After migration completes, continue to Step 1 to verify the new structure is cor
 
 ## Step 1: Check everything
 
-Inspect the project root and print a checklist report. Mark each item as **ok**, **missing**, or **broken** (symlink exists but points to wrong target).
+Inspect the project root and print a checklist report. Mark each item as **ok**, **missing**, or **stale**.
 
-### Directories (5)
+### Directories (7)
 
-- `.hats/manager/`
-- `.hats/designer/`
-- `.hats/cto/`
+- `.hats/manager/` (private workspace)
+- `.hats/designer/` (private workspace)
+- `.hats/cto/` (private workspace)
 - `.hats/shared/`
+- `.hats/shared/specs/` (Manager's .feature files)
+- `.hats/shared/designs/` (Designer's mockups)
 - `.hats/qa/`
 
-### Symlinks (9)
+### Stale symlinks (should NOT exist)
 
-**`.hats/manager/`**
-- `.hats/manager/.hats-shared` → `../shared`
-- `.hats/manager/.hats-designer` → `../designer`
-
-**`.hats/designer/`**
-- `.hats/designer/.hats-shared` → `../shared`
-- `.hats/designer/.hats-manager` → `../manager`
-
-**`.hats/cto/`**
-- `.hats/cto/.hats-shared` → `../shared`
-- `.hats/cto/.hats-manager` → `../manager`
-- `.hats/cto/.hats-designer` → `../designer`
-
-**`.hats/qa/`**
-- `.hats/qa/.hats-shared` → `../shared`
-- `.hats/qa/.hats-manager` → `../manager`
+Check all role directories for `.hats-*` symlinks. If any exist, flag them as **stale** — they should be removed.
 
 ### Messaging files in `.hats/shared/`
 
@@ -151,15 +145,13 @@ Directories:
   [ok]      .hats/designer/
   [missing] .hats/cto/
   [ok]      .hats/shared/
+  [ok]      .hats/shared/specs/
+  [ok]      .hats/shared/designs/
   [ok]      .hats/qa/
 
-Symlinks:
-  [ok]      .hats/manager/.hats-shared → ../shared
-  [ok]      .hats/manager/.hats-designer → ../designer
-  [missing] .hats/cto/.hats-shared → ../shared
-  [missing] .hats/cto/.hats-manager → ../manager
-  [missing] .hats/cto/.hats-designer → ../designer
-  ...
+Stale symlinks:
+  [stale]   .hats/qa/.hats-manager (remove)
+  [stale]   .hats/qa/.hats-shared (remove)
 
 Files:
   [ok]      .hats/status.json
@@ -172,25 +164,14 @@ If everything is ok, say "All good!" and stop.
 
 ## Step 3: Ask before fixing
 
-If there are any missing or broken items, list what will be fixed and ask the user to confirm before proceeding.
+If there are any missing or stale items, list what will be fixed and ask the user to confirm before proceeding.
 
 ## Step 4: Fix
 
 Only after user confirms:
 
-- Create missing directories
-- Recreate missing or broken symlinks using `ln -sfn`:
-  ```bash
-  ln -sfn ../shared .hats/manager/.hats-shared
-  ln -sfn ../designer .hats/manager/.hats-designer
-  ln -sfn ../shared .hats/designer/.hats-shared
-  ln -sfn ../manager .hats/designer/.hats-manager
-  ln -sfn ../shared .hats/cto/.hats-shared
-  ln -sfn ../manager .hats/cto/.hats-manager
-  ln -sfn ../designer .hats/cto/.hats-designer
-  ln -sfn ../shared .hats/qa/.hats-shared
-  ln -sfn ../manager .hats/qa/.hats-manager
-  ```
+- Create missing directories (including `.hats/shared/specs/` and `.hats/shared/designs/`)
+- Remove stale `.hats-*` symlinks from role directories
 - Create missing `.hats/status.json` with `{}`
 - Append `.hats/role` to `.gitignore` if missing
 - Append `.hats/logs/` to `.gitignore` if missing

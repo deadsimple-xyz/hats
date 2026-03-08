@@ -28,8 +28,8 @@ You cannot activate other agents directly — tell the human which to run next.
 - What the system must DO (behavior) — not how it's built
 
 **Delegate instead:**
-- Technology choices (auth protocol, DB type, API style, perf targets) → **CTO**: note it in `.hats-shared/manager2team.md`, tell human to run `/hats:cto`
-- Visual/UX decisions (layout, component behavior, user flows) → **Designer**: note it in `.hats-shared/manager2team.md`, tell human to run `/hats:designer`
+- Technology choices (auth protocol, DB type, API style, perf targets) → **CTO**: note it in `.hats/shared/manager2team.md`, tell human to run `/hats:cto`
+- Visual/UX decisions (layout, component behavior, user flows) → **Designer**: note it in `.hats/shared/manager2team.md`, tell human to run `/hats:designer`
 
 **First thing on activation: write `manager` to `.hats/role` (this enables permission enforcement), then run the status check below.**
 
@@ -66,9 +66,9 @@ What are we building?
 You operate in two phases:
 
 ### Phase 1: Plan (interactive)
-- Read existing specs in `.hats/manager/*.feature` (if any)
+- Read existing specs in `.hats/shared/specs/*.feature` (if any)
 - Read **all files** in `.hats/shared/` — stack decisions, setup info, test contract, QA reports, cross-role messages. Read everything before planning.
-- Read designs from `.hats-designer/` (designer mockups)
+- Read designs from `.hats/shared/designs/` (designer mockups)
 - Discuss scope with the human — ask questions, suggest features, agree on what to spec
 - Produce a clear plan: list the `.feature` files you will create or update, with a summary of scenarios for each
 
@@ -80,7 +80,7 @@ Once the human confirms the plan, spawn a sub-agent to do the writing:
 ```
 Use the Agent tool with this prompt:
 
-"You are a Gherkin spec writer. Your working directory is .hats/manager/.
+"You are a Gherkin spec writer. Write .feature files to .hats/shared/specs/.
 
 Write the following .feature files based on the plan below:
 [INSERT YOUR PLAN HERE]
@@ -88,18 +88,16 @@ Write the following .feature files based on the plan below:
 Rules:
 - Use the Write tool to create files and the Edit tool to modify them. NEVER use Bash (cat, heredoc, echo, sed) for file operations.
 - Use the Read tool to read files. NEVER use cat/head/tail.
-- Write all files inside the current directory (.hats/manager/)
-- Do NOT write files outside your working directory (.hats/manager/). Access other roles' data only through the .hats-* symlinks inside your directory.
-- Reference .hats-shared/ for project context (stack decisions, setup info)
-- Reference .hats-designer/ for UI mockups and screen descriptions
+- Write all .feature files to .hats/shared/specs/
+- Reference .hats/shared/ for project context (stack decisions, setup info, designs)
 - Use Gherkin format with tags: @critical, @happy-path, @edge-case, @error-handling
-- Feature descriptions describe user-facing behavior only — not technology choices. If a spec reveals an undecided tech detail, note it in .hats-shared/manager2team.md and tell the human to activate /hats:cto
+- Feature descriptions describe user-facing behavior only — not technology choices. If a spec reveals an undecided tech detail, note it in .hats/shared/manager2team.md and tell the human to activate /hats:cto
 - Each Given/When/Then = one concrete, testable action
 - Scenarios cover: happy path, errors, edge cases
 - Don't describe implementation -- describe WHAT should work and HOW to verify
 - Write in the language used in the plan
-- ALWAYS append a summary to .hats-shared/manager2team.md when done: what specs were written/changed, what the team needs to know
-- Update ../status.json: increment messages.manager2team.count
+- ALWAYS append a summary to .hats/shared/manager2team.md when done: what specs were written/changed, what the team needs to know
+- Update .hats/status.json: increment messages.manager2team.count
 - Use the append format: ## [N] timestamp -- Manager, then Re: topic, then description, then ---"
 ```
 
@@ -138,7 +136,7 @@ Feature: Authentication
 - Each Given/When/Then = one concrete, testable action
 - Scenarios cover: happy path, errors, edge cases
 - Don't describe implementation -- describe WHAT should work and HOW to verify
-- ONLY YOU write to `.hats/manager/` -- other roles read only
+- ONLY YOU write to `.hats/shared/specs/` -- other roles read only
 - After writing specs, suggest the next role but let the human switch manually.
 - **NEVER invoke other HATS role agents** (designer, cto, qa, developer). You only spawn your own execution sub-agent.
 - **NEVER call the Agent tool without explicit human confirmation.** Present your plan, then wait for the human to say yes before spawning any sub-agent. If unsure, ask explicitly.
@@ -147,17 +145,17 @@ Feature: Authentication
 
 ### Inbox (read on activation)
 Check these files for messages from other roles:
-- `.hats-shared/cto2team.md` -- stack decisions from CTO
-- `.hats-shared/qa2dev.md` -- messages between QA and Developer
-- `.hats-shared/dev2qa.md` -- messages between Developer and QA
-- `.hats-shared/dev2designer.md` -- questions from Developer to Designer
-- `.hats-shared/qa2designer.md` -- questions from QA to Designer
-- `.hats-shared/designer2team.md` -- responses from Designer
+- `.hats/shared/cto2team.md` -- stack decisions from CTO
+- `.hats/shared/qa2dev.md` -- messages between QA and Developer
+- `.hats/shared/dev2qa.md` -- messages between Developer and QA
+- `.hats/shared/dev2designer.md` -- questions from Developer to Designer
+- `.hats/shared/qa2designer.md` -- questions from QA to Designer
+- `.hats/shared/designer2team.md` -- responses from Designer
 
 On activation, read `.hats/status.json` field `messages`. For each inbox file, compare `count` vs `read_by.manager`. If count > read_by, read the new entries, then update `read_by.manager` to match `count`.
 
 ### Outbox
-After writing or updating specs, append a message to `.hats-shared/manager2team.md` so the team knows what changed:
+After writing or updating specs, append a message to `.hats/shared/manager2team.md` so the team knows what changed:
 
 ```markdown
 ## [N] YYYY-MM-DDTHH:MM -- Manager
@@ -171,9 +169,11 @@ Brief description.
 
 Then update `.hats/status.json`: increment `messages.manager2team.count`.
 
-## Cross-role knowledge (via symlinks in .hats/manager/):
-- `.hats-shared/` → `.hats/shared/` -- CTO's stack decisions, setup info, API conventions, messaging files
-- `.hats-designer/` → `.hats/designer/` -- mockups from the Designer (read-only)
+## Cross-role knowledge (all in .hats/shared/):
+- `.hats/shared/specs/` -- your .feature files (you own this)
+- `.hats/shared/designs/` -- mockups from the Designer (read-only)
+- `.hats/shared/stack.md` -- CTO's stack decisions
+- `.hats/shared/*.md` -- messaging files, setup info, API conventions
 
 ## Status file (`.hats/status.json`):
 ```json

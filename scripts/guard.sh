@@ -17,7 +17,7 @@ if [ -z "$FILE_PATH" ]; then
   exit 0
 fi
 
-# Resolve symlinks so .hats-* paths map back to real directories
+# Resolve symlinks (legacy compat — v4.0.0 removed symlinks but this is harmless)
 PARENT=$(dirname "$FILE_PATH")
 if [ -d "$PARENT" ]; then
   FILE_PATH="$(cd "$PARENT" && pwd -P)/$(basename "$FILE_PATH")"
@@ -56,46 +56,71 @@ if [ "$ROLE" != "developer" ]; then
 fi
 
 # 4. Per-role blocked dirs and shared/ file restrictions
+# Shared subdirectories: specs/ is owned by manager, designs/ is owned by designer
 case "$ROLE" in
   manager)   BLOCKED=".hats/designer/ .hats/cto/ .hats/qa/"
              if echo "$FILE_PATH" | grep -q "\.hats/shared/"; then
-               BASENAME=$(basename "$FILE_PATH")
-               case "$BASENAME" in
-                 manager2team.md) ;;  # allowed
-                 *) guard_block "Manager can only write manager2team.md in .hats/shared/" ;;
-               esac
+               if echo "$FILE_PATH" | grep -q "\.hats/shared/specs/"; then
+                 :  # manager owns shared/specs/
+               elif echo "$FILE_PATH" | grep -q "\.hats/shared/designs/"; then
+                 guard_block "Manager cannot write to shared/designs/ (owned by Designer)"
+               else
+                 BASENAME=$(basename "$FILE_PATH")
+                 case "$BASENAME" in
+                   manager2team.md) ;;  # allowed
+                   *) guard_block "Manager can only write to shared/specs/ and shared/manager2team.md" ;;
+                 esac
+               fi
              fi ;;
   designer)  BLOCKED=".hats/manager/ .hats/cto/ .hats/qa/"
              if echo "$FILE_PATH" | grep -q "\.hats/shared/"; then
-               BASENAME=$(basename "$FILE_PATH")
-               case "$BASENAME" in
-                 designer2team.md) ;;  # allowed
-                 *) guard_block "Designer can only write designer2team.md in .hats/shared/" ;;
-               esac
+               if echo "$FILE_PATH" | grep -q "\.hats/shared/designs/"; then
+                 :  # designer owns shared/designs/
+               elif echo "$FILE_PATH" | grep -q "\.hats/shared/specs/"; then
+                 guard_block "Designer cannot write to shared/specs/ (owned by Manager)"
+               else
+                 BASENAME=$(basename "$FILE_PATH")
+                 case "$BASENAME" in
+                   designer2team.md) ;;  # allowed
+                   *) guard_block "Designer can only write to shared/designs/ and shared/designer2team.md" ;;
+                 esac
+               fi
              fi ;;
   cto)       BLOCKED=".hats/manager/ .hats/designer/ .hats/qa/"
              if echo "$FILE_PATH" | grep -q "\.hats/shared/"; then
-               BASENAME=$(basename "$FILE_PATH")
-               case "$BASENAME" in
-                 stack.md|setup.md|api.md|cto2team.md) ;;  # allowed
-                 *) guard_block "CTO can only write stack.md, setup.md, api.md, cto2team.md in .hats/shared/" ;;
-               esac
+               if echo "$FILE_PATH" | grep -q "\.hats/shared/specs/\|\.hats/shared/designs/"; then
+                 guard_block "CTO cannot write to shared/specs/ or shared/designs/"
+               else
+                 BASENAME=$(basename "$FILE_PATH")
+                 case "$BASENAME" in
+                   stack.md|setup.md|api.md|cto2team.md) ;;  # allowed
+                   *) guard_block "CTO can only write stack.md, setup.md, api.md, cto2team.md in .hats/shared/" ;;
+                 esac
+               fi
              fi ;;
   qa)        BLOCKED=".hats/manager/ .hats/designer/ .hats/cto/"
              if echo "$FILE_PATH" | grep -q "\.hats/shared/"; then
-               BASENAME=$(basename "$FILE_PATH")
-               case "$BASENAME" in
-                 qa-report.md|qa2dev.md|qa2designer.md|test-contract.md) ;;  # allowed
-                 *) guard_block "QA can only write qa-report.md, qa2dev.md, qa2designer.md, test-contract.md in .hats/shared/" ;;
-               esac
+               if echo "$FILE_PATH" | grep -q "\.hats/shared/specs/\|\.hats/shared/designs/"; then
+                 guard_block "QA cannot write to shared/specs/ or shared/designs/"
+               else
+                 BASENAME=$(basename "$FILE_PATH")
+                 case "$BASENAME" in
+                   qa-report.md|qa2dev.md|qa2designer.md|test-contract.md) ;;  # allowed
+                   *) guard_block "QA can only write qa-report.md, qa2dev.md, qa2designer.md, test-contract.md in .hats/shared/" ;;
+                 esac
+               fi
              fi ;;
   developer) BLOCKED=".hats/manager/ .hats/designer/ .hats/cto/ .hats/qa/"
              if echo "$FILE_PATH" | grep -q "\.hats/shared/"; then
-               BASENAME=$(basename "$FILE_PATH")
-               case "$BASENAME" in
-                 setup.md|api.md|dev2qa.md|dev2designer.md) ;;  # allowed
-                 *) guard_block "Developer can only write setup.md, api.md, dev2qa.md, dev2designer.md in .hats/shared/" ;;
-               esac
+               if echo "$FILE_PATH" | grep -q "\.hats/shared/specs/\|\.hats/shared/designs/"; then
+                 guard_block "Developer cannot write to shared/specs/ or shared/designs/"
+               else
+                 BASENAME=$(basename "$FILE_PATH")
+                 case "$BASENAME" in
+                   setup.md|api.md|dev2qa.md|dev2designer.md) ;;  # allowed
+                   *) guard_block "Developer can only write setup.md, api.md, dev2qa.md, dev2designer.md in .hats/shared/" ;;
+                 esac
+               fi
              fi ;;
   *) exit 0 ;;
 esac

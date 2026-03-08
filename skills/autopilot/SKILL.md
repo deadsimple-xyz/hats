@@ -6,7 +6,7 @@ description: Run the QA ↔ Developer loop autonomously until tests pass.
 
 You are the autopilot orchestrator. You coordinate the QA ↔ Developer loop — QA writes/updates tests, Developer implements to make them pass, repeat until green. You do NOT write `.hats/role` (guards are permissive when no role is set, so you can freely read status files between stages).
 
-**Prerequisites:** Manager, Designer, and CTO stages must already be complete. Specs (`.hats/manager/*.feature`), designs (`.hats/designer/`), and stack decisions (`.hats/shared/stack.md`) must exist.
+**Prerequisites:** Manager, Designer, and CTO stages must already be complete. Specs (`.hats/shared/specs/*.feature`), designs (`.hats/shared/designs/`), and stack decisions (`.hats/shared/stack.md`) must exist.
 
 **Prefix EVERY message with "Autopilot:"**
 
@@ -17,8 +17,8 @@ You are the autopilot orchestrator. You coordinate the QA ↔ Developer loop —
 ### Step 1: Check prerequisites
 
 Verify all three exist:
-- `.hats/manager/*.feature` (Glob)
-- `.hats/designer/` has content (Glob: `.hats/designer/*`)
+- `.hats/shared/specs/*.feature` (Glob)
+- `.hats/shared/designs/` has content (Glob: `.hats/shared/designs/*`)
 - `.hats/shared/stack.md` exists (Read)
 
 If any are missing, stop:
@@ -65,10 +65,10 @@ You are a Hats QA agent. Read agents/qa.md for your full behavioral specificatio
 Your task: generate tests from specs.
 1. Write `qa` to `.hats/role`
 2. Read agents/qa.md
-3. Read .hats/manager/*.feature and .hats/shared/stack.md
+3. Read .hats/shared/specs/*.feature and .hats/shared/stack.md
 4. Proceed directly to Phase 2 — spawn your execution sub-agent
 5. Generate automated tests in .hats/qa/ using the framework appropriate for the stack
-6. Write .hats/qa/run-tests.sh
+6. Write .hats/qa/run-tests.sh — ALWAYS use `bash run-tests.sh` to run tests, never run test commands directly
 7. Write the test contract to .hats/shared/test-contract.md (qa attributes, API endpoints, expected behaviors)
 8. Write a summary to .hats/shared/qa2dev.md
 
@@ -80,7 +80,8 @@ Your task: review Developer's feedback and adjust tests if needed.
 4. Read .hats/shared/qa-report.md for latest test results
 5. If the Developer flagged test issues, fix them. If tests are correct and the Developer just needs to keep fixing code, write a clarifying message to .hats/shared/qa2dev.md explaining the expected behavior.
 6. Proceed directly to Phase 2 — spawn your execution sub-agent
-7. Write a summary to .hats/shared/qa2dev.md
+7. Run tests using `bash run-tests.sh` — NEVER run test commands directly (no raw npx playwright, npx bddgen, pytest, etc.)
+8. Write a summary to .hats/shared/qa2dev.md
 ```
 
 **Verify:** Check that `.hats/qa/run-tests.sh` exists (round 1) or that QA wrote to `.hats/shared/qa2dev.md` (round 2+). If not, stop:
@@ -105,7 +106,7 @@ You are a Hats Developer agent. Read agents/developer.md for your full behaviora
 Your task:
 1. Write `developer` to `.hats/role`
 2. Read agents/developer.md
-3. Read .hats/manager/*.feature and .hats/shared/stack.md
+3. Read .hats/shared/specs/*.feature and .hats/shared/stack.md
 4. Read .hats/shared/qa2dev.md for QA's latest message
 5. Read .hats/shared/test-contract.md for the exact qa attributes, API endpoints, and expectations to implement against
 6. Proceed directly to Phase 2 — run the implement→verify loop (up to 5 cycles)

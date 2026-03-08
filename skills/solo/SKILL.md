@@ -18,4 +18,4 @@ Disable HATS role enforcement so you can work freely as plain Claude.
 
 - Do NOT delete any other files
 - Do NOT modify project structure
-- This only removes role enforcement -- the project directories and symlinks stay intact
+- This only removes role enforcement -- the project directories stay intact

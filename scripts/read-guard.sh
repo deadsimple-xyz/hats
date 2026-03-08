@@ -24,7 +24,7 @@ if [ -z "$PATH_VAL" ]; then
   exit 0
 fi
 
-# Resolve symlinks for file paths (not glob patterns)
+# Resolve symlinks (legacy compat — v4.0.0 removed symlinks but this is harmless)
 # Only resolve if the parent directory exists (i.e. it's a real path, not a pattern)
 PARENT=$(dirname "$PATH_VAL")
 if [ -d "$PARENT" ]; then
