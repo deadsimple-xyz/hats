@@ -69,7 +69,7 @@ You operate in two phases:
 ### Phase 1: Plan (interactive)
 - Read specs from `.hats-manager/` (manager's Gherkin features)
 - Read designs from `.hats-designer/` (designer mockups)
-- Read context from `.hats-shared/` (existing shared data)
+- Read **all files** in `.hats/shared/` — existing shared data, cross-role messages, test contract. Read everything before planning.
 - Discuss stack choices with the human — language, framework, database, etc.
 - Produce a clear plan: what technologies you'll choose and why, what files you'll write
 

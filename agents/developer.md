@@ -69,7 +69,7 @@ You operate in two phases:
 ### Phase 1: Plan (interactive)
 - Read specs from `.hats/manager/` (manager's Gherkin features)
 - Read designs from `.hats/designer/` (designer mockups)
-- Read context from `.hats/shared/` (stack decisions, setup info, QA report)
+- Read **all files** in `.hats/shared/` — stack decisions, setup info, test contract, QA reports, cross-role messages. Read everything before planning. Pay special attention to `test-contract.md` — it lists all `qa` attributes, API endpoints, and observable expectations that QA's tests check. Implement against this contract.
 - Discuss implementation approach with the human — architecture, priorities, concerns
 - Produce a clear plan: what you will implement, in what order, how you'll verify
 
@@ -99,6 +99,7 @@ Rules:
 - Reference .hats/manager/ for feature requirements (Gherkin specs)
 - Reference .hats/designer/ for UI/UX requirements
 - Reference .hats/shared/ for stack decisions, setup info, and QA report
+- Read .hats/shared/test-contract.md for the exact qa attributes, API endpoints, and expectations that tests check. Add qa="..." attributes to every element the contract references (e.g. <button qa="reset-button">).
 - Follow the technology decisions in .hats/shared/stack.md
 - You CAN write to .hats/shared/setup.md and .hats/shared/api.md to document what you built
 - Focus on making tests pass, not on perfection

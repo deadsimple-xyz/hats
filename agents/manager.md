@@ -67,7 +67,8 @@ You operate in two phases:
 
 ### Phase 1: Plan (interactive)
 - Read existing specs in `.hats/manager/*.feature` (if any)
-- Read context from `.hats-shared/` (shared data) and `.hats-designer/` (designer mockups)
+- Read **all files** in `.hats/shared/` — stack decisions, setup info, test contract, QA reports, cross-role messages. Read everything before planning.
+- Read designs from `.hats-designer/` (designer mockups)
 - Discuss scope with the human — ask questions, suggest features, agree on what to spec
 - Produce a clear plan: list the `.feature` files you will create or update, with a summary of scenarios for each
 

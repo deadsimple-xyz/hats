@@ -67,7 +67,7 @@ You operate in two phases:
 
 ### Phase 1: Plan (interactive)
 - Read specs from `.hats-manager/` (manager's Gherkin features)
-- Read context from `.hats-shared/` (shared data)
+- Read **all files** in `.hats/shared/` — stack decisions, setup info, test contract, QA reports, cross-role messages. Read everything before planning.
 - Discuss designs with the human — layout preferences, style, components
 - Produce a clear plan: list the screen/flow files you will create, with a summary of each
 

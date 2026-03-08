@@ -10,6 +10,13 @@ Read `MIGRATIONS.md` for the full list of version-specific changes. The checks b
 
 Before running the normal check, detect whether the project is on an older version.
 
+**Detect v3.1.0 (pre-3.2.0):** check if `.hats/qa/` has test files but `.hats/shared/test-contract.md` does not exist. If so, warn:
+```
+Doctor: Found tests in .hats/qa/ but no test contract.
+Since v3.2.0, QA writes .hats/shared/test-contract.md listing all qa attributes and expectations.
+Run /hats:qa to generate the test contract and migrate selectors to qa="..." attributes.
+```
+
 **Detect v3.0.0 (pre-3.1.0):** check if `.hats-role` exists at the project root. If so, move it to `.hats/role`. Also check if `.gitignore` contains `.hats-role` — if so, replace with `.hats/role`.
 
 **Detect v2 (pre-3.0.0):** check if any of `manager/`, `designer/`, `cto/`, `shared/`, `qa/` exist at the project root (without the `.hats/` prefix) AND `.hats/` does not yet exist.
@@ -121,6 +128,7 @@ Inspect the project root and print a checklist report. Mark each item as **ok**,
 - `.hats/shared/dev2designer.md` exists (create empty if missing)
 - `.hats/shared/qa2designer.md` exists (create empty if missing)
 - `.hats/shared/designer2team.md` exists (create empty if missing)
+- `.hats/shared/test-contract.md` exists (only if `.hats/qa/` has test files — skip if no tests yet)
 
 ### Files
 

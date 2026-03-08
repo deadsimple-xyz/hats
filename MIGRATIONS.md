@@ -2,6 +2,26 @@
 
 The doctor reads this file to upgrade old Hats projects.
 
+## 3.1.0 → 3.2.0
+
+### Test contract and `qa` attributes
+
+QA now writes a **test contract** to `.hats/shared/test-contract.md` listing all observable expectations (qa attributes, API endpoints, response fields). The Developer reads this contract instead of guessing what tests expect.
+
+**Selectors:** QA tests must use `qa="..."` HTML attributes instead of CSS classes, ids, or tag names. Example: `<button qa="reset-button">Reset</button>`, selected as `[qa="reset-button"]`.
+
+**Existing projects with tests:** If `.hats/qa/` already contains tests using CSS selectors:
+1. Run `/hats:qa` — QA will review existing tests, migrate selectors to `qa` attributes, and write `test-contract.md`
+2. Run `/hats:developer` — Developer will read the contract and add `qa="..."` attributes to the implementation
+
+**New file:** `.hats/shared/test-contract.md` (created by QA, read by Developer)
+
+**Guard update:** QA can now write `test-contract.md` to `.hats/shared/`.
+
+### Autopilot scope change
+
+Autopilot (`/hats:autopilot`) now runs only the **QA ↔ Developer loop**, not the full pipeline. Manager, Designer, and CTO must be run manually first. Max 3 outer rounds.
+
 ## 3.0.0 → 3.1.0
 
 ### Role file moved

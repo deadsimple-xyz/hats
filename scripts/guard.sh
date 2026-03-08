@@ -38,6 +38,11 @@ if echo "$FILE_PATH" | grep -q '\.hats/role$'; then
   exit 0
 fi
 
+# 1b. Allow plan-mode files for all roles
+if echo "$FILE_PATH" | grep -q '/.claude/plans/'; then
+  exit 0
+fi
+
 # 2. .feature files are owned by the manager -- no other role may write them
 if [ "$ROLE" != "manager" ] && echo "$FILE_PATH" | grep -qE '\.feature$'; then
   guard_block ".feature files are owned by the manager role"
@@ -80,8 +85,8 @@ case "$ROLE" in
              if echo "$FILE_PATH" | grep -q "\.hats/shared/"; then
                BASENAME=$(basename "$FILE_PATH")
                case "$BASENAME" in
-                 qa-report.md|qa2dev.md|qa2designer.md) ;;  # allowed
-                 *) guard_block "QA can only write qa-report.md, qa2dev.md, qa2designer.md in .hats/shared/" ;;
+                 qa-report.md|qa2dev.md|qa2designer.md|test-contract.md) ;;  # allowed
+                 *) guard_block "QA can only write qa-report.md, qa2dev.md, qa2designer.md, test-contract.md in .hats/shared/" ;;
                esac
              fi ;;
   developer) BLOCKED=".hats/manager/ .hats/designer/ .hats/cto/ .hats/qa/"
