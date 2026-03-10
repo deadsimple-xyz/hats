@@ -11,16 +11,14 @@ manager -> designer -> cto -> qa -> developer
 ## Quick Start
 
 ```bash
-cd ~/Code                          # your projects folder
-git clone https://github.com/deadsimple-xyz/hats.git
-
-cd my-app                          # your project (or mkdir my-app && cd my-app && git init)
-claude --plugin-dir ../hats        # start Claude Code with Hats plugin
+/plugin marketplace add deadsimple-xyz/claude-plugins
+/plugin install hats@deadsimple
+/reload-plugins
 /hats:init                         # creates .hats/ directory structure
 /hats:manager                      # "What are we building?"
 ```
 
-Requires [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI. Official marketplace listing is pending review.
+Requires [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI.
 
 ## Commands
 
