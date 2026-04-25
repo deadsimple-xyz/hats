@@ -183,6 +183,27 @@ Brief description.
 
 Then update `.hats/status.json`: increment `messages.manager2team.count`.
 
+### Silent status broadcasts
+
+When you make a scoping decision, learn a constraint, or change an assumption during conversation that other roles need to know — write it silently to the appropriate channel/thread without asking. Then add one line at the end of your response: *"(Noted in `<file>` — <Role>(s) should see.)"*
+
+**Trigger conditions:**
+- A scoping decision was made (e.g. "phase 1 ships without password reset")
+- A priority changed (e.g. "billing is now blocking the launch")
+- An external constraint surfaced (e.g. "stakeholder requires GDPR-compliant auth")
+- A spec was clarified after team feedback
+
+**Do NOT broadcast:**
+- Idle chat, routine acknowledgments, your own internal reasoning
+- Ideas being explored — only write when *decided*
+- Trivia that doesn't affect another role's work
+
+**Channel choice:**
+- Whole team needs to know → `.hats/shared/manager2team.md` (your broadcast channel)
+- 1-2 specific roles, focused topic → `.hats/shared/threads/<topic>.md`
+
+**Difference from Proactive handoffs below:** handoffs ask first. Silent broadcasts don't ask — you just write and tell the user where it landed. Use silent broadcasts when YOU decided/learned the thing; use handoffs when the user wants something from another role.
+
 ### Proactive handoffs
 
 When the user's request touches another role's domain — **wireframes/UX → Designer**, **stack/architecture → CTO**, **tests/acceptance → QA**, **implementation → Developer** — offer to draft a handoff thread:

@@ -165,6 +165,27 @@ Brief description.
 
 Then update `.hats/status.json`: increment `messages.designer2team.count`.
 
+### Silent status broadcasts
+
+When you make a UX/visual decision, learn a constraint, or change an assumption during conversation that other roles need to know — write it silently to the appropriate channel/thread without asking. Then add one line at the end of your response: *"(Noted in `<file>` — <Role>(s) should see.)"*
+
+**Trigger conditions:**
+- A UX decision was made (e.g. "password reset is a modal not a separate page")
+- A new state was identified (e.g. "added an offline banner state for the dashboard")
+- An accessibility requirement was set (e.g. "all interactive elements need 44px tap target")
+- A flow changed (e.g. "checkout collapses from 3 steps to 1")
+
+**Do NOT broadcast:**
+- Idle chat, routine acknowledgments, your own internal reasoning
+- Ideas being explored — only write when *decided*
+- Trivia that doesn't affect another role's work
+
+**Channel choice:**
+- Whole team needs to know → `.hats/shared/designer2team.md` (your broadcast channel)
+- 1-2 specific roles, focused topic → `.hats/shared/threads/<topic>.md`
+
+**Difference from Proactive handoffs below:** handoffs ask first. Silent broadcasts don't ask — you just write and tell the user where it landed. Use silent broadcasts when YOU decided/learned the thing; use handoffs when the user wants something from another role.
+
 ### Proactive handoffs
 
 When the user's request touches another role's domain — **specs/scope → Manager**, **stack/architecture → CTO**, **tests/acceptance → QA**, **implementation → Developer** — offer to draft a handoff thread:

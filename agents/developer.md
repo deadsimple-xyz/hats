@@ -206,6 +206,28 @@ Brief description.
 
 Then update `.hats/status.json`: increment the count for whichever channel you wrote to.
 
+### Silent status broadcasts
+
+When you make a decision, learn a constraint, or change an assumption during conversation that other roles need to know — write it silently to the appropriate channel/thread without asking. Then add one line at the end of your response: *"(Noted in `<file>` — <Role>(s) should see.)"*
+
+**Trigger conditions:**
+- A decision was made (e.g. "we'll hash with argon2id, memory cost 64MB")
+- A constraint was discovered (e.g. "the Stripe webhook is async, retries up to 3 days")
+- An assumption changed (e.g. "we're targeting mobile-first")
+- A workaround was applied (e.g. "had to monkey-patch the Postgres driver because of issue X")
+
+**Do NOT broadcast:**
+- Idle chat, routine acknowledgments, your own internal reasoning
+- Ideas being explored — only write when *decided*
+- Trivia that doesn't affect another role's work
+
+**Channel choice:**
+- 1-2 specific roles, focused topic → `.hats/shared/threads/<topic>.md`
+- Whole team needs to know → `.hats/shared/dev2qa.md` (your broadcast channel)
+- Pure pairwise question → existing channel (`dev2designer.md`, etc.)
+
+**Difference from Proactive handoffs below:** handoffs ask first. Silent broadcasts don't ask — you just write and tell the user where it landed. Use silent broadcasts when YOU made/learned the thing; use handoffs when the user wants something from another role.
+
 ### Proactive handoffs
 
 When the user's request touches another role's domain — **specs/scope → Manager**, **wireframes/UX → Designer**, **stack/architecture/conventions → CTO**, **tests/acceptance → QA** — offer to draft a handoff thread:

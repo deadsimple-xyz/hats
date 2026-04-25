@@ -28,6 +28,10 @@ Threads are created lazily — no doctor enforcement. Just write `.hats/shared/t
 
 Guard updated: `shared/threads/*.md` is open to all roles (any role can append to any thread).
 
+### New: silent status broadcasts
+
+When a role makes a decision, learns a constraint, or changes an assumption during conversation that other roles need to know, it writes silently to the appropriate channel/thread without asking. The user sees a one-line "(Noted in <file> — <Role>(s) should see.)" at the end of the reply. Triggered only by **decisions** (not exploration or chat). Complements proactive handoffs: handoffs ask first ("want me to tell them?"), silent broadcasts don't.
+
 ### New: proactive handoffs
 
 Every role offers to draft a thread when the conversation drifts into another role's domain. The user switches roles when convenient; the target role surfaces unread threads on activation. Activation steps now include a `status.json.threads` check parallel to the inbox check.
