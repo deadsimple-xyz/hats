@@ -18,10 +18,12 @@ Create the missing directories and files (do NOT overwrite existing files):
 - `.hats/manager/` (private workspace)
 - `.hats/designer/` (private workspace)
 - `.hats/cto/` (private workspace)
+- `.hats/qa/`
+- `.hats/developer/` (private workspace)
 - `.hats/shared/`
 - `.hats/shared/specs/` (Manager writes .feature files here)
 - `.hats/shared/designs/` (Designer writes design files here)
-- `.hats/qa/`
+- `.hats/shared/threads/` (any role can append topic memos here)
 - `.hats/shared/manager2team.md` (empty)
 - `.hats/shared/cto2team.md` (empty)
 - `.hats/shared/qa2dev.md` (empty)
@@ -29,6 +31,11 @@ Create the missing directories and files (do NOT overwrite existing files):
 - `.hats/shared/dev2designer.md` (empty)
 - `.hats/shared/qa2designer.md` (empty)
 - `.hats/shared/designer2team.md` (empty)
+- `.hats/manager/notes.md` (empty — role scratchpad)
+- `.hats/designer/notes.md` (empty — role scratchpad)
+- `.hats/cto/notes.md` (empty — role scratchpad)
+- `.hats/qa/notes.md` (empty — role scratchpad)
+- `.hats/developer/notes.md` (empty — role scratchpad)
 - `.hats/status.json` (with default messaging structure — see MIGRATIONS.md for the full `messages` schema)
 - `.gitignore` (append if exists, create if not):
   ```
@@ -38,6 +45,7 @@ Create the missing directories and files (do NOT overwrite existing files):
   .env
   .hats/role
   .hats/logs/
+  .hats/debug
   *.log
   ```
 

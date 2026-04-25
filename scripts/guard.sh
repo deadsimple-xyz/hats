@@ -55,10 +55,20 @@ if [ "$ROLE" != "developer" ]; then
   fi
 fi
 
-# 4. Per-role blocked dirs and shared/ file restrictions
+# 4a. shared/threads/*.md is open to all roles — any role can append to any thread.
+# Filename must end .md. Subdirectories allowed (e.g. shared/threads/auth/login.md).
+if echo "$FILE_PATH" | grep -q "\.hats/shared/threads/"; then
+  if echo "$FILE_PATH" | grep -qE '\.md$'; then
+    exit 0
+  else
+    guard_block "Files in .hats/shared/threads/ must end .md"
+  fi
+fi
+
+# 4b. Per-role blocked dirs and shared/ file restrictions
 # Shared subdirectories: specs/ is owned by manager, designs/ is owned by designer
 case "$ROLE" in
-  manager)   BLOCKED=".hats/designer/ .hats/cto/ .hats/qa/"
+  manager)   BLOCKED=".hats/designer/ .hats/cto/ .hats/qa/ .hats/developer/"
              if echo "$FILE_PATH" | grep -q "\.hats/shared/"; then
                if echo "$FILE_PATH" | grep -q "\.hats/shared/specs/"; then
                  :  # manager owns shared/specs/
@@ -72,7 +82,7 @@ case "$ROLE" in
                  esac
                fi
              fi ;;
-  designer)  BLOCKED=".hats/manager/ .hats/cto/ .hats/qa/"
+  designer)  BLOCKED=".hats/manager/ .hats/cto/ .hats/qa/ .hats/developer/"
              if echo "$FILE_PATH" | grep -q "\.hats/shared/"; then
                if echo "$FILE_PATH" | grep -q "\.hats/shared/designs/"; then
                  :  # designer owns shared/designs/
@@ -86,7 +96,7 @@ case "$ROLE" in
                  esac
                fi
              fi ;;
-  cto)       BLOCKED=".hats/manager/ .hats/designer/ .hats/qa/"
+  cto)       BLOCKED=".hats/manager/ .hats/designer/ .hats/qa/ .hats/developer/"
              if echo "$FILE_PATH" | grep -q "\.hats/shared/"; then
                if echo "$FILE_PATH" | grep -q "\.hats/shared/specs/\|\.hats/shared/designs/"; then
                  guard_block "CTO cannot write to shared/specs/ or shared/designs/"
@@ -98,7 +108,7 @@ case "$ROLE" in
                  esac
                fi
              fi ;;
-  qa)        BLOCKED=".hats/manager/ .hats/designer/ .hats/cto/"
+  qa)        BLOCKED=".hats/manager/ .hats/designer/ .hats/cto/ .hats/developer/"
              if echo "$FILE_PATH" | grep -q "\.hats/shared/"; then
                if echo "$FILE_PATH" | grep -q "\.hats/shared/specs/\|\.hats/shared/designs/"; then
                  guard_block "QA cannot write to shared/specs/ or shared/designs/"

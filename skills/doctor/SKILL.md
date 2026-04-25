@@ -99,15 +99,17 @@ After migration completes, continue to Step 1 to verify the new structure is cor
 
 Inspect the project root and print a checklist report. Mark each item as **ok**, **missing**, or **stale**.
 
-### Directories (7)
+### Directories (9)
 
 - `.hats/manager/` (private workspace)
 - `.hats/designer/` (private workspace)
 - `.hats/cto/` (private workspace)
+- `.hats/qa/`
+- `.hats/developer/` (private workspace)
 - `.hats/shared/`
 - `.hats/shared/specs/` (Manager's .feature files)
 - `.hats/shared/designs/` (Designer's mockups)
-- `.hats/qa/`
+- `.hats/shared/threads/` (any-role topic memos)
 
 ### Stale symlinks (should NOT exist)
 
@@ -124,6 +126,14 @@ Check all role directories for `.hats-*` symlinks. If any exist, flag them as **
 - `.hats/shared/designer2team.md` exists (create empty if missing)
 - `.hats/shared/test-contract.md` exists (only if `.hats/qa/` has test files — skip if no tests yet)
 
+### Per-role scratchpads
+
+- `.hats/manager/notes.md` exists (create empty if missing)
+- `.hats/designer/notes.md` exists (create empty if missing)
+- `.hats/cto/notes.md` exists (create empty if missing)
+- `.hats/qa/notes.md` exists (create empty if missing)
+- `.hats/developer/notes.md` exists (create empty if missing)
+
 ### Files
 
 - `.hats/status.json` exists and contains `messages` key (add default messaging structure if missing)
@@ -132,6 +142,7 @@ Check all role directories for `.hats-*` symlinks. If any exist, flag them as **
 
 - `.gitignore` contains the line `.hats/role`
 - `.gitignore` contains the line `.hats/logs/`
+- `.gitignore` contains the line `.hats/debug`
 
 ## Step 2: Print the report
 
@@ -170,11 +181,13 @@ If there are any missing or stale items, list what will be fixed and ask the use
 
 Only after user confirms:
 
-- Create missing directories (including `.hats/shared/specs/` and `.hats/shared/designs/`)
+- Create missing directories (including `.hats/shared/specs/`, `.hats/shared/designs/`, `.hats/shared/threads/`, `.hats/developer/`)
+- Create missing `notes.md` scratchpads (empty)
 - Remove stale `.hats-*` symlinks from role directories
 - Create missing `.hats/status.json` with `{}`
 - Append `.hats/role` to `.gitignore` if missing
 - Append `.hats/logs/` to `.gitignore` if missing
+- Append `.hats/debug` to `.gitignore` if missing
 
 ## Rules
 

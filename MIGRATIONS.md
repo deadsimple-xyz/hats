@@ -2,6 +2,62 @@
 
 The doctor reads this file to upgrade old Hats projects.
 
+## 4.0.0 → 4.1.0
+
+### New: per-role scratchpads (`notes.md`)
+
+Each role gets a persistent working memory file at `.hats/<role>/notes.md` that survives across activations and sub-agent spawns. Reduces redundant file reads (real-project logs showed 20-45× re-reads of the same file in one autopilot session) and carries context between cycles.
+
+Adds `.hats/developer/` directory (previously skipped — developer had no own dir). Init/doctor manage it.
+
+### New: thread-based messaging (`shared/threads/`)
+
+Ad-hoc per-topic conversations now live in `.hats/shared/threads/<topic>.md` (kebab-case filenames). Any role can read or append. Channels (`<role>2team.md`, etc.) remain for canonical broadcasts; threads cover cross-cutting topics that don't fit the channel matrix.
+
+`.hats/status.json` gets a parallel `threads` key:
+```json
+{
+  "messages": { ... existing ... },
+  "threads": {
+    "auth-redesign": { "count": 5, "read_by": { "cto": 5, "manager": 3 } }
+  }
+}
+```
+
+Threads are created lazily — no doctor enforcement. Just write `.hats/shared/threads/<topic>.md` and update `status.json.threads.<topic>` when needed.
+
+Guard updated: `shared/threads/*.md` is open to all roles (any role can append to any thread).
+
+### New: proactive handoffs
+
+Every role offers to draft a thread when the conversation drifts into another role's domain. The user switches roles when convenient; the target role surfaces unread threads on activation. Activation steps now include a `status.json.threads` check parallel to the inbox check.
+
+The handoff captures **the user's request in their own words** (no paraphrasing) so intent doesn't drift across role switches.
+
+### New: "go" mode
+
+Type `go` (or `continue`, `next`, `proceed`, `gogo`) as the first message after activating any role to skip the activation question and have the role pick up the most obvious next action from inbox + threads + scratchpad + project state. Each role has tailored defaults — Developer goes straight to fixing failing tests in `qa-report.md`, QA reviews unread `dev2qa` and re-runs.
+
+### New: `/hats:status` skill
+
+Read-only digest of message channels, threads, scratchpad sizes, test status, and a suggested next action. Does not change `.hats/role`.
+
+### New: secret redaction in debug logs
+
+`scripts/debug-log.sh` now redacts common token shapes (Figma `figd_`, OpenAI/Anthropic `sk-`, GitHub `ghp_`, Slack `xox*-`, AWS `AKIA*`, Bearer tokens, JWT) before writing to `.hats/logs/`. **If you have existing `.hats/logs/*.jsonl` files, audit them — they may contain unredacted secrets from before this update.**
+
+### .gitignore additions
+- `.hats/debug` (debug toggle file should not be committed)
+
+### Guard tightening: developer dir isolation
+- Non-developer roles can no longer write to `.hats/developer/` (was an isolation gap).
+
+### Guard relaxation: CTO can read `.hats/qa/`
+- The CTO read-block on `.hats/qa/` is removed. Architecture review legitimately needs visibility into the test surface.
+
+### Autopilot: inline round signal
+- Developer Turn now receives a 3-5 line digest of QA's latest message + failing-test summary inline in the prompt, so the dev sub-agent doesn't have to re-discover the round's signal from files.
+
 ## 3.2.0 → 4.0.0
 
 ### Breaking: symlinks removed, shared data consolidated

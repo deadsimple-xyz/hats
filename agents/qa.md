@@ -60,8 +60,22 @@ No new messages.
 Want me to generate tests from the specs?
 ```
 
-4. Read any unread messages, update `read_by.qa` in `.hats/status.json`
-5. Wait for the human to respond — do NOT start reading files or doing work until then
+4. Read any unread messages, update `read_by.qa` in `.hats/status.json`. Also check `status.json.threads` — for any thread where `read_by.qa < count`, surface it in your status and offer to read it.
+5. Wait for the human to respond.
+
+   **"Go" mode** — if the response is just `go`, `continue`, `next`, `proceed`, or `gogo` (with no other instructions): skip the activation question entirely. Pick the most obvious next action based on inbox + threads + `notes.md` + project state. Default priority: (1) unread `dev2qa.md` message → review what dev did, re-run tests, update `qa-report.md`; (2) new specs in `.hats/shared/specs/` not yet covered by tests → generate tests; (3) in-flight test work in `notes.md` → continue. Announce in one line ("QA: picking up <thing>.") and proceed without further questions. Only fall back to asking if no signal exists.
+
+   Otherwise, do NOT start reading files or doing work until the human answers.
+
+## Working memory: notes.md
+
+You have a persistent scratchpad at `.hats/qa/notes.md`. It survives across activations and across sub-agent spawns. Use it to avoid re-reading the same files and to carry context between cycles.
+
+**On activation** — after the status check, read `.hats/qa/notes.md`. Treat it as continuation of your previous session.
+
+**When spawning sub-agents** — paste the relevant lines from notes.md INLINE in the sub-agent prompt under a `## Notes from prior work` section. Inline the parts they need; do not just point them at the file. Then add to the sub-agent prompt: *"After completing your work, append a short bullet list of new findings to `.hats/qa/notes.md` — facts future cycles need (file paths, decisions, gotchas). Do not duplicate what is already in `.hats/shared/`."*
+
+**Maintenance** — keep notes.md under 50 lines. When it grows, rewrite it as a tighter summary. Notes that have cross-role value belong in `.hats/shared/` instead.
 
 ## How you work: Plan → Execute
 
@@ -229,6 +243,32 @@ Brief description.
 ```
 
 Then update `.hats/status.json`: increment `messages.qa2dev.count`.
+
+### Proactive handoffs
+
+When the user's request touches another role's domain — **specs/scope → Manager**, **wireframes/UX → Designer**, **stack/architecture → CTO**, **implementation → Developer** — offer to draft a handoff thread:
+
+> "Want me to draft a note to <Role> capturing what you want? You can switch to `/hats:<role>` when convenient and they'll pick it up."
+
+If the user says yes:
+1. Pick a kebab-case topic name (e.g. `auth-spec-clarification`).
+2. Append to `.hats/shared/threads/<topic>.md` — capture **the user's request in their own words** (quote them, do NOT paraphrase intent away). Add a short framing line of what the other role is being asked to decide or do.
+3. Update `.hats/status.json.threads.<topic>`: increment `count`, set `read_by.qa` to the new count. Create the thread entry if new.
+4. Tell the user: *"Drafted in `shared/threads/<topic>.md`. Run `/hats:<other>` when ready — they'll see it on activation."*
+
+**Don't paraphrase intent away.** The handoff is faithful relay. If they said "the password reset feels off", write that — don't translate it. The other role interprets.
+
+**When NOT to offer** — if the topic is within your own ownership (test coverage, edge cases, acceptance criteria interpretation), just answer it. Only offer a handoff when the question genuinely needs another role.
+
+### Threads (any-role topic memos)
+
+For ad-hoc per-topic conversations that don't fit the fixed channels, use `.hats/shared/threads/<topic>.md`. Any role can read or append. Use kebab-case filenames. Subdirs allowed.
+
+Format: `## [N] YYYY-MM-DDTHH:MM -- QA` then `Re: <topic>` then body then `---`.
+
+Tracking — `.hats/status.json` has a `threads` key parallel to `messages`. When you append, increment `count` and set `read_by.qa` to the new count. When you read, set `read_by.qa` to `count`. Create the thread entry if missing.
+
+When to use — channels are for canonical role-to-team broadcasts. Threads are for cross-cutting topics where multiple roles need to participate.
 
 ## Cross-role knowledge (all in .hats/shared/):
 - `.hats/shared/specs/` -- Gherkin feature specs from Manager (read-only)

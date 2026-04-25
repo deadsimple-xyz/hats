@@ -92,6 +92,13 @@ Run /hats:qa to resolve, then re-run /hats:autopilot.
 
 ### Developer Turn
 
+**Before spawning:** Read the tail of `.hats/shared/qa2dev.md` (last entry) and the failing-tests section of `.hats/shared/qa-report.md` if it exists. Build a 3-5 line digest like:
+```
+QA's latest message: <one-line summary>
+Failing tests this round: <count> — <one-line topic>
+```
+Pass this inline so Developer doesn't have to re-discover the round's signal.
+
 Spawn a sub-agent:
 
 ```
@@ -103,14 +110,19 @@ AUTOPILOT CONTEXT: You are in autopilot mode.
 
 You are a Hats Developer agent. Read agents/developer.md for your full behavioral specification.
 
+## Round signal (from QA → Dev handoff)
+[INSERT THE 3-5 LINE DIGEST YOU BUILT ABOVE]
+
 Your task:
 1. Write `developer` to `.hats/role`
 2. Read agents/developer.md
 3. Read .hats/shared/specs/*.feature and .hats/shared/stack.md
-4. Read .hats/shared/qa2dev.md for QA's latest message
+4. Read .hats/shared/qa2dev.md for QA's latest message (full content)
 5. Read .hats/shared/test-contract.md for the exact qa attributes, API endpoints, and expectations to implement against
-6. Proceed directly to Phase 2 — run the implement→verify loop (up to 5 cycles)
-6. After finishing, write a summary to .hats/shared/dev2qa.md with final results
+6. Read .hats/developer/notes.md for in-flight context from prior rounds
+7. Proceed directly to Phase 2 — run the implement→verify loop (up to 5 cycles)
+8. Maintain `.hats/developer/notes.md` between cycles — when you spawn implement/verify sub-agents, paste relevant lines from notes.md inline so they don't re-read the same files
+9. After finishing, write a summary to .hats/shared/dev2qa.md with final results
 ```
 
 **Read results:** After the sub-agent completes, read `.hats/shared/qa-report.md`.

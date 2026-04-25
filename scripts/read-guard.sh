@@ -45,7 +45,7 @@ read_block() {
 case "$ROLE" in
   manager)   BLOCKED=".hats/qa/" ;;
   designer)  BLOCKED=".hats/qa/" ;;
-  cto)       BLOCKED=".hats/qa/" ;;
+  cto)       BLOCKED="" ;;
   qa)        BLOCKED="" ;;
   developer) BLOCKED=".hats/qa/" ;;
   *) exit 0 ;;
