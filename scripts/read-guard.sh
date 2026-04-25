@@ -35,7 +35,11 @@ fi
 read_block() {
   if [ -f ".hats/debug" ]; then
     LOG_DIR=".hats/logs"; mkdir -p "$LOG_DIR"
-    echo "{\"ts\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"event\":\"read_block\",\"role\":\"$ROLE\",\"file\":\"$PATH_VAL\",\"tool\":\"$TOOL_NAME\",\"reason\":\"$1\"}" >> "$LOG_DIR/$(date -u +%Y-%m-%d).jsonl"
+    # shellcheck source=common.sh
+    . "$(dirname "${BASH_SOURCE[0]}")/common.sh"
+    HV=$(hats_version)
+    MODEL=$(hats_model "$INPUT")
+    echo "{\"ts\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"hv\":\"$HV\",\"model\":\"$MODEL\",\"event\":\"read_block\",\"role\":\"$ROLE\",\"file\":\"$PATH_VAL\",\"tool\":\"$TOOL_NAME\",\"reason\":\"$1\"}" >> "$LOG_DIR/$(date -u +%Y-%m-%d).jsonl"
   fi
   echo "Blocked: $1" >&2
   exit 2

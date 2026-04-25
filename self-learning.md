@@ -48,18 +48,40 @@ This shows the Developer agent repeatedly trying to read test files despite bein
 Each line is a JSON object:
 
 ```jsonl
-{"ts":"2026-03-04T14:30:00Z","role":"manager","tool":"Write","file":".hats/manager/auth.feature"}
-{"ts":"2026-03-04T14:30:05Z","role":"manager","tool":"Bash","command":"ls .hats/manager/"}
-{"ts":"2026-03-04T14:30:10Z","event":"write_block","role":"designer","file":"src/app.ts","tool":"Write","reason":"designer can only write inside .hats/"}
+{"ts":"2026-04-25T14:30:00Z","hv":"4.2.0","model":"claude-opus-4-7-20251024","role":"manager","tool":"Write","file":".hats/shared/specs/auth.feature"}
+{"ts":"2026-04-25T14:30:05Z","hv":"4.2.0","model":"claude-opus-4-7-20251024","role":"manager","tool":"Bash","command":"ls .hats/shared/specs/"}
+{"ts":"2026-04-25T14:30:10Z","hv":"4.2.0","model":"claude-opus-4-7-20251024","event":"write_block","role":"designer","file":"src/app.ts","tool":"Write","reason":"designer can only write inside .hats/"}
 ```
 
 Fields:
 - `ts` — UTC timestamp
+- `hv` — Hats plugin version active at the time
+- `model` — Claude model active at the time (auto-detected from session transcript; override via `.hats/model`)
 - `role` — active role at the time (`none` if no role set)
 - `tool` — tool name (Bash, Write, Edit, Read, Glob, Grep, Agent, etc.)
 - `event` — only present for guard blocks (`write_block` or `read_block`)
 - `reason` — only present for guard blocks
 - Tool-specific: `file`, `command`, `pattern`, `path`, `description`
+
+## Filtering by model + version
+
+`hv` and `model` let you compare friction across releases and Claude versions. Useful queries:
+
+```bash
+# Only logs from a specific model (e.g. Opus 4.7)
+jq -c 'select(.model | startswith("claude-opus-4-7"))' .hats/logs/*.jsonl
+
+# Only logs from a specific Hats version
+jq -c 'select(.hv == "4.2.0")' .hats/logs/*.jsonl
+
+# Count guard blocks per model — see if upgrading the model reduced friction
+jq -c 'select(.event)' .hats/logs/*.jsonl | jq -r '.model' | sort | uniq -c
+
+# Compare same role's behaviour across versions
+jq -c 'select(.role=="developer" and .tool=="Read") | "\(.hv)\t\(.file)"' .hats/logs/*.jsonl | sort | uniq -c
+```
+
+This makes it possible to ask "did 4.1.0's notes.md actually cut redundant reads?" or "is the Opus 4.6 → 4.7 upgrade fixing friction we worked around in 3.x?"
 
 ## Tips for Contributors
 
@@ -67,3 +89,4 @@ Fields:
 - **Look for unnecessary reads** — if a role reads files it doesn't need, the agent prompt may be too broad
 - **Look for missing communication** — if the Developer struggles without context that exists in `shared/`, the workflow instructions may need updating
 - **Compare autopilot vs manual** — autopilot logs show the ideal pipeline flow; manual logs show real human usage patterns
+- **Compare across model + version** — before proposing a fix, check if the friction still appears with the latest `hv` and `model`. Some old issues may already be solved by Claude getting smarter, not by Hats changes.

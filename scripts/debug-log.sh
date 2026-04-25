@@ -6,6 +6,9 @@
 
 INPUT=$(cat)
 
+# shellcheck source=common.sh
+. "$(dirname "${BASH_SOURCE[0]}")/common.sh"
+
 ROLE_FILE=".hats/role"
 ROLE="none"
 [ -f "$ROLE_FILE" ] && ROLE=$(cat "$ROLE_FILE")
@@ -14,8 +17,13 @@ LOG_DIR=".hats/logs"
 mkdir -p "$LOG_DIR"
 LOG_FILE="$LOG_DIR/$(date -u +%Y-%m-%d).jsonl"
 TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+HV=$(hats_version)
+MODEL=$(hats_model "$INPUT")
 
 TOOL=$(echo "$INPUT" | jq -r '.tool_name // empty')
+
+# Common JSON prefix — all log lines start with these fields.
+META="\"ts\":\"$TS\",\"hv\":\"$HV\",\"model\":\"$MODEL\",\"role\":\"$ROLE\""
 
 # Redact common secret shapes from a string before it lands in the JSONL.
 # Reads stdin, writes stdout. Conservative — only patterns with a stable prefix.
@@ -34,31 +42,31 @@ redact_secrets() {
 case "$TOOL" in
   Bash)
     CMD=$(echo "$INPUT" | jq -r '.tool_input.command // empty' | redact_secrets)
-    echo "{\"ts\":\"$TS\",\"role\":\"$ROLE\",\"tool\":\"Bash\",\"command\":$(echo "$CMD" | jq -Rs .)}" >> "$LOG_FILE"
+    echo "{$META,\"tool\":\"Bash\",\"command\":$(echo "$CMD" | jq -Rs .)}" >> "$LOG_FILE"
     ;;
   Write|Edit)
     FILE=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
-    echo "{\"ts\":\"$TS\",\"role\":\"$ROLE\",\"tool\":\"$TOOL\",\"file\":\"$FILE\"}" >> "$LOG_FILE"
+    echo "{$META,\"tool\":\"$TOOL\",\"file\":\"$FILE\"}" >> "$LOG_FILE"
     ;;
   Read)
     FILE=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
-    echo "{\"ts\":\"$TS\",\"role\":\"$ROLE\",\"tool\":\"Read\",\"file\":\"$FILE\"}" >> "$LOG_FILE"
+    echo "{$META,\"tool\":\"Read\",\"file\":\"$FILE\"}" >> "$LOG_FILE"
     ;;
   Glob)
     PAT=$(echo "$INPUT" | jq -r '.tool_input.pattern // empty')
-    echo "{\"ts\":\"$TS\",\"role\":\"$ROLE\",\"tool\":\"Glob\",\"pattern\":\"$PAT\"}" >> "$LOG_FILE"
+    echo "{$META,\"tool\":\"Glob\",\"pattern\":\"$PAT\"}" >> "$LOG_FILE"
     ;;
   Grep)
     PAT=$(echo "$INPUT" | jq -r '.tool_input.pattern // empty')
     P=$(echo "$INPUT" | jq -r '.tool_input.path // empty')
-    echo "{\"ts\":\"$TS\",\"role\":\"$ROLE\",\"tool\":\"Grep\",\"pattern\":\"$PAT\",\"path\":\"$P\"}" >> "$LOG_FILE"
+    echo "{$META,\"tool\":\"Grep\",\"pattern\":\"$PAT\",\"path\":\"$P\"}" >> "$LOG_FILE"
     ;;
   Agent)
     DESC=$(echo "$INPUT" | jq -r '.tool_input.description // empty' | redact_secrets)
-    echo "{\"ts\":\"$TS\",\"role\":\"$ROLE\",\"tool\":\"Agent\",\"description\":$(echo "$DESC" | jq -Rs .)}" >> "$LOG_FILE"
+    echo "{$META,\"tool\":\"Agent\",\"description\":$(echo "$DESC" | jq -Rs .)}" >> "$LOG_FILE"
     ;;
   *)
-    echo "{\"ts\":\"$TS\",\"role\":\"$ROLE\",\"tool\":\"$TOOL\"}" >> "$LOG_FILE"
+    echo "{$META,\"tool\":\"$TOOL\"}" >> "$LOG_FILE"
     ;;
 esac
 

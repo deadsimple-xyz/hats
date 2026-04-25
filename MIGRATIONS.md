@@ -2,6 +2,26 @@
 
 The doctor reads this file to upgrade old Hats projects.
 
+## 4.1.1 → 4.2.0
+
+### New: model + version tagging in debug logs
+
+Every JSONL log line now includes `hv` (Hats version) and `model` (Claude model) so you can filter logs by either when analyzing friction:
+
+```jsonl
+{"ts":"...","hv":"4.2.0","model":"claude-opus-4-7-20251024","role":"developer","tool":"Bash","command":"..."}
+```
+
+**Model resolution order** (per log entry):
+1. `.hats/model` file (manual override — `echo "claude-opus-4-7" > .hats/model`)
+2. Auto-detected from the most recent assistant message in the session transcript
+3. `$CLAUDE_MODEL` / `$ANTHROPIC_MODEL` env vars
+4. `"unknown"`
+
+**Why this matters** — when reviewing accumulated logs, some friction patterns may already be resolved by Claude getting smarter (Opus 4.6 → 4.7 etc.), not by changes to Hats. The new fields let you compare same role behaviour across model + Hats version combinations before proposing a Hats-side fix. See `self-learning.md` for jq filter examples.
+
+**No schema break** — old log files without these fields stay readable; new lines just have richer metadata.
+
 ## 4.0.0 → 4.1.0
 
 ### New: per-role scratchpads (`notes.md`)

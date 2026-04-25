@@ -44,6 +44,8 @@ Use this format:
 ## Hats Status — <project-dir>
 
 **Active role:** <role from .hats/role, or "none (solo mode)" if missing>
+**Hats version:** <read from MIGRATIONS.md latest entry or plugin.json if accessible — else "unknown">
+**Model:** <read from .hats/model if exists, else say "auto (detected per-call from transcript)">
 
 ### Message channels
 
