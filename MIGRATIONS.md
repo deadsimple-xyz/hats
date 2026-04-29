@@ -2,6 +2,26 @@
 
 The doctor reads this file to upgrade old Hats projects.
 
+## 4.2.0 → 4.3.0
+
+### Old-Twitter activation + result style
+
+Roles no longer print multi-line "Checking in" banners or status dashboards on activation. Activation is now silent (read inbox + threads + notes.md, mark read, pick next action) and the role announces in ONE line, ~200 chars, then proceeds.
+
+**Default is action, not permission.** The Plan-then-confirm gate is gone:
+- Removed "Phase 1: Plan (interactive)" / "Phase 2: Execute" framing across all 5 agents.
+- Removed "NEVER call the Agent tool without explicit human confirmation" rule.
+- Roles never ask "what are we building?", "want me to start with 1?", or about commits — they just do all by default.
+- Go-mode is no longer the special path; it's the only path. The `go`/`continue`/etc. shortcut still works but is now redundant.
+
+**New `## How you talk` section** in every agent enforces:
+- One line per response (~200 char target).
+- Result shape: `Role: <verbed> <thing>. → <file>` — no recap, the user reads the file.
+- Cycle update shape (Developer): `Developer: Cycle 2/5 — 14 pass, 3 fail. Fixing X.`
+- Max one question per response, only when literally blocked.
+
+**No project changes needed.** Activation files (`.hats/role`, `.hats/<role>/notes.md`) and shared channels are unchanged. Doctor has nothing to migrate.
+
 ## 4.1.1 → 4.2.0
 
 ### New: model + version tagging in debug logs
