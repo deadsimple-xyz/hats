@@ -2,6 +2,10 @@
 
 The doctor reads this file to upgrade old Hats projects.
 
+## 4.3.0 → 4.3.1
+
+Plugin manifest fix: removed explicit `"hooks": "./hooks/hooks.json"` from `plugin.json`. The standard `hooks/hooks.json` is auto-loaded by Claude Code, and declaring it explicitly caused a duplicate-load error on `/doctor`. No project-side change.
+
 ## 4.2.0 → 4.3.0
 
 ### Old-Twitter activation + result style
