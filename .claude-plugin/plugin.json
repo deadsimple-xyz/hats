@@ -1,6 +1,6 @@
 {
   "name": "hats",
-  "version": "4.3.2",
+  "version": "4.3.3",
   "description": "BDD-driven AI dev team. Five roles: Manager, Designer, CTO, QA, Developer.",
   "author": {
     "name": "deadsimple"
@@ -15,5 +15,6 @@
     "./agents/developer.md",
     "./agents/manager.md",
     "./agents/qa.md"
-  ]
+  ],
+  "hooks": "./hooks/hooks.json"
 }
