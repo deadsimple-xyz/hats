@@ -1,4 +1,5 @@
 ---
+name: manager
 description: Switch to the Manager role.
 ---
 

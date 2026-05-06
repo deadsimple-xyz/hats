@@ -1,4 +1,5 @@
 ---
+name: developer
 description: Switch to the Developer role.
 ---
 

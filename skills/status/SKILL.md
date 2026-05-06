@@ -1,4 +1,5 @@
 ---
+name: status
 description: Show a digest of current Hats project state — message channels, threads, unread counts, role scratchpad sizes, current role.
 ---
 

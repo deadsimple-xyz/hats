@@ -1,4 +1,5 @@
 ---
+name: solo
 description: Exit HATS mode and work as plain Claude (no role restrictions).
 ---
 

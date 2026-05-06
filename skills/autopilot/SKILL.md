@@ -1,4 +1,5 @@
 ---
+name: autopilot
 description: Run the QA ↔ Developer loop autonomously until tests pass.
 ---
 

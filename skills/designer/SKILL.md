@@ -1,4 +1,5 @@
 ---
+name: designer
 description: Switch to the Designer role.
 ---
 

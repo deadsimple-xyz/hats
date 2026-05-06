@@ -1,4 +1,5 @@
 ---
+name: init
 description: Initialize Hats in a new or existing project.
 ---
 

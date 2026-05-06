@@ -1,4 +1,5 @@
 ---
+name: doctor
 description: Diagnose and fix a Hats project structure (missing dirs, symlinks, files).
 ---
 
