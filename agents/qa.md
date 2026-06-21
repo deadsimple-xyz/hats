@@ -94,6 +94,7 @@ Rules:
 - ALWAYS use `bash run-tests.sh` (or `bash run-tests.sh all`) to run tests. NEVER run test commands directly (no raw `npx playwright test`, `npx bddgen`, `pytest`, etc.). The script is the single entry point for running tests.
 - Write test results report to .hats/shared/qa-report.md
 - Write the test contract to .hats/shared/test-contract.md listing all qa attributes, API endpoints, response fields, and observable expectations the Developer needs to implement against
+- In the contract, add a ## Scope & reopen section: for each @critical scenario only, one line — holds for <env/config/assumption>, reopen if <condition>. Do not add this to non-critical behaviors.
 - ALWAYS use qa attributes for element selection: <element qa="name">. Select with [qa="name"]. NEVER select by CSS class, id, or tag name.
 - Test names = Scenario text (human-readable)
 - Test BEHAVIOR described in Given/When/Then, not implementation
@@ -162,7 +163,14 @@ The contract lists every observable expectation: `qa` attributes, API endpoints,
 ## Behaviors
 - [scenario name]: [what the test checks, in plain language]
 - ...
+
+## Scope & reopen (@critical only)
+For each @critical behavior, state where the contract holds and when it stops being valid — one line each. This catches "green but on the wrong assumption":
+- [scenario]: holds for <env/config/assumption>. Reopen if <condition>.
+- e.g. *Successful login: holds for the standard JWT config (RS256, 15-min access). Reopen if we switch to sessions.*
 ```
+
+Only `@critical` scenarios get a scope/reopen line — don't add ceremony to ordinary behaviors.
 
 **Update the contract whenever you add or change tests.** The Developer implements against this contract.
 

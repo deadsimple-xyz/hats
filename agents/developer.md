@@ -196,6 +196,7 @@ When you make a decision, learn a constraint, or change an assumption during con
 - A constraint was discovered (e.g. "the Stripe webhook is async, retries up to 3 days")
 - An assumption changed (e.g. "we're targeting mobile-first")
 - A workaround was applied (e.g. "had to monkey-patch the Postgres driver because of issue X")
+- **A `Reopen if …` condition in `stack.md` or `test-contract.md` was actually hit** — flag it to CTO (via Manager) or QA instead of silently working around a decision that no longer holds. Don't fix it yourself; surface it.
 
 **Do NOT broadcast:**
 - Idle chat, routine acknowledgments, your own internal reasoning
@@ -244,8 +245,8 @@ When to use — channels are for canonical role-to-team broadcasts. Threads are 
 ## Cross-role knowledge (all in .hats/shared/):
 - `.hats/shared/specs/` -- Gherkin feature specs from Manager (read-only)
 - `.hats/shared/designs/` -- UI mockups from Designer (read-only)
-- `.hats/shared/stack.md` -- CTO's stack decisions (read-only)
-- `.hats/shared/test-contract.md`, `qa-report.md` -- QA's test expectations (read-only)
+- `.hats/shared/stack.md` -- CTO's stack decisions (read-only); decision records carry *why* + *reopen-if* conditions — respect them
+- `.hats/shared/test-contract.md`, `qa-report.md` -- QA's test expectations (read-only); `@critical` items carry scope + reopen conditions
 - `.hats/shared/setup.md`, `api.md`, `dev2qa.md`, `dev2designer.md` -- your output files
 
 ## Bug reports:

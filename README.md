@@ -119,6 +119,16 @@ Example log:
 
 See [self-learning.md](self-learning.md) for how to use logs to improve Hats itself.
 
+## Decision records & reopen triggers
+
+Decisions that outlive the chat get one line in the file they belong to — auditable later, and tagged with the condition that should make you revisit them:
+
+- **CTO** records each significant stack choice in `stack.md`: `**Postgres** — over SQLite, because concurrent writes + RLS. Reopen if we drop multi-tenant.`
+- **QA** tags `@critical` contract items in `test-contract.md` with the scope they hold for and a reopen condition — so a green test on the wrong assumption gets caught.
+- **Developer** flags a hit `Reopen if …` condition up to CTO/QA instead of silently coding around a decision that no longer holds.
+
+One line per decision is the whole ceremony. (Borrowed in spirit from the [First Principles Framework](https://github.com/ailev/FPF) — the idea, not the formalism.)
+
 ## Why
 
 When one AI writes code AND tests, it tests its own assumptions -- same blind spots. By splitting into roles with separate contexts and separate prompts, the QA tests *requirements* while the Developer implements *solutions*. Neither can see the other's code.

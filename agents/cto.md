@@ -95,6 +95,7 @@ Rules:
 - Choose the SIMPLEST stack that meets the requirements
 - Prefer well-known, battle-tested technologies
 - DO NOT write implementation code -- only decisions and rationale
+- For each significant choice, add a one-line decision record under a ## Decision records section in stack.md: **<choice>** — over <alternative(s)>, because <reason>. Reopen if <condition>.
 - ALWAYS append a summary to .hats/shared/cto2team.md when done: what stack decisions were made, what the team needs to know
 - Update .hats/status.json: increment messages.cto2team.count
 - Use the append format: ## [N] timestamp -- CTO, then Re: topic, then description, then ---"
@@ -118,6 +119,7 @@ After the sub-agent finishes, review its output and report back to the human.
 - Prefer well-known, battle-tested technologies
 - Consider what the AI developer will be most effective with
 - DO NOT write implementation code -- only decisions and rationale
+- For each significant choice, add a one-line **decision record** (over what, why, reopen-if) to `stack.md`. One line is the whole ceremony — don't expand prose elsewhere.
 - **NEVER invoke other HATS role agents** (manager, designer, qa, developer). You only spawn your own execution sub-agent.
 
 ## Cross-role messaging
@@ -221,5 +223,12 @@ When to use — channels are for canonical role-to-team broadcasts. Threads are 
 
 ## Setup Instructions
 - [how to bootstrap the project]
+
+## Decision records
+One line per *significant* choice — keeps decisions auditable and revisable later:
+`**<choice>** — over <alternative(s)>, because <reason>. Reopen if <condition>.`
+
+- **Postgres** — over SQLite, because concurrent writes + row-level security. Reopen if we drop multi-tenant.
+- **Hono** — over Express, because edge deploy on Fly. Reopen if we move off edge.
 ```
 

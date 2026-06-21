@@ -2,6 +2,18 @@
 
 The doctor reads this file to upgrade old Hats projects.
 
+## 4.3.5 → 4.4.0
+
+### Decision records + reopen triggers (FPF-lite)
+
+Three lightweight borrows from the [First Principles Framework](https://github.com/ailev/FPF) — the *ideas* (auditable decisions, scope, reopen-triggers), not the formal vocabulary. Old-Twitter style is untouched: every addition is one line per item, written to a file, never to chat.
+
+- **CTO** now records each significant stack choice as a one-line **decision record** in `stack.md` under a `## Decision records` section: `**<choice>** — over <alternative(s)>, because <reason>. Reopen if <condition>.`
+- **QA** adds a `## Scope & reopen` section to `test-contract.md` for `@critical` scenarios only: where the contract holds and when it stops being valid. Catches "green but on the wrong assumption".
+- **Developer** treats a hit `Reopen if …` condition as a flag-up to CTO/QA, not a silent workaround.
+
+**No project changes needed.** This is prompt-only — existing `stack.md` / `test-contract.md` files keep working; the new sections appear the next time CTO/QA rewrite them. Doctor has nothing to migrate.
+
 ## 4.3.0 → 4.3.1
 
 Plugin manifest fix: removed explicit `"hooks": "./hooks/hooks.json"` from `plugin.json`. The standard `hooks/hooks.json` is auto-loaded by Claude Code, and declaring it explicitly caused a duplicate-load error on `/doctor`. No project-side change.
