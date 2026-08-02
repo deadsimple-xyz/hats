@@ -27,14 +27,34 @@ make_project() {
 # Feed one tool call to a guard script exactly as Claude Code would.
 # Usage: run_guard <script> <role> <json tool_input> [tool_name]
 # Sets: GUARD_CODE, GUARD_ERR
+# `sid` is what makes a session a session. Tests that care about two sessions
+# set SESSION themselves; everything else shares one, exactly like today.
+SESSION="${SESSION:-test-session-A}"
+
 run_guard() {
   local script="$1" role="$2" tool_input="$3" tool="${4:-Write}"
-  echo "$role" > "$PROJECT/.hats/role"
+  [ "$role" = "-" ] || echo "$role" > "$PROJECT/.hats/role"
   local out
-  out=$(cd "$PROJECT" && echo "{\"tool_name\":\"$tool\",\"tool_input\":$tool_input}" \
+  out=$(cd "$PROJECT" && echo "{\"session_id\":\"$SESSION\",\"tool_name\":\"$tool\",\"tool_input\":$tool_input}" \
         | bash "$HATS_ROOT/scripts/$script" 2>&1)
   GUARD_CODE=$?
   GUARD_ERR="$out"
+}
+
+# Switch a role the way a skill does: a Write to .hats/role that passes through
+# the guard, so the guard gets its chance to record and to refuse.
+switch_role() {
+  local from="$1" to="$2"
+  echo "$from" > "$PROJECT/.hats/role"
+  local out
+  out=$(cd "$PROJECT" && echo "{\"session_id\":\"$SESSION\",\"tool_name\":\"Write\",\"tool_input\":{\"file_path\":\"$PROJECT/.hats/role\",\"content\":\"$to\"}}" \
+        | bash "$HATS_ROOT/scripts/guard.sh" 2>&1)
+  SWITCH_CODE=$?
+  SWITCH_ERR="$out"
+  # The guard only decides; Claude Code performs the write. Mirror that here,
+  # or the test would be checking a world the guard never allows to exist.
+  [ "$SWITCH_CODE" -eq 0 ] && echo "$to" > "$PROJECT/.hats/role"
+  return 0
 }
 
 # A KNOWN GAP is a promise the code does not keep yet, stated as a row instead

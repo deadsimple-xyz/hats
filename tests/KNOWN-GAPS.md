@@ -66,7 +66,17 @@ mechanism. Every guarantee in the README holds exactly as long as the model
 follows the instruction not to relabel itself — which is the shape this project
 already names elsewhere: *an instruction is not a mechanism*.
 
-**Options, none free:**
+**Decided (2 August): environment plus audit.** `HATS_ROLE` pins the role where
+the fence must be real — autopilot, per-role spawned sessions, CI — and a write
+to `.hats/role` under it is REFUSED, with a refusal that names the pin instead
+of failing silently. Where a human is at the wheel the door stays open, because
+one session per role is a real cost to pay every day for a risk that shows up
+rarely. What changed is that it is no longer invisible: every switch appends to
+`.hats/role-history` with the session, the old role and the new one — and that
+audit is deliberately NOT behind the debug flag, because the day you want it is
+the day nobody thought to turn logging on.
+
+**The options as they were weighed:**
 
 - **`HATS_ROLE` in the environment.** Strongest: a process cannot rewrite the
   env its parent gave it, so the position of the fence moves outside the reach
@@ -83,19 +93,38 @@ already names elsewhere: *an instruction is not a mechanism*.
 
 ---
 
-## G3 — the role is ambient: two sessions in one repo share one fence
+## G3 — the role is ambient: two sessions in one repo share one fence  — CLOSED
 
 `.hats/role` is per-DIRECTORY. Two Claude Code sessions in the same repo — one
 per product, a subagent beside its parent, an autopilot beside a human — read
-and write the same byte. The second session's switch silently re-aims the
-first session's fence, and neither is told.
+and write the same byte. The second session's switch silently re-aimed the
+first session's fence, and neither was told.
 
-**This one is a plain bug, and it has a plain fix.** Hooks receive `session_id`
-(verified on a live log line: `"sid":"8de5645b"`, matching the running
-session). Storing the role at `.hats/sessions/<session_id>` gives every session
-its own position, with no change to how switching feels.
+**Closed.** Hooks receive `session_id` (verified on a live log line,
+`"sid":"8de5645b"`, matching the running session — not taken on trust). The
+guard now records each switch against `.hats/sessions/<session_id>`, and
+`hats_role` in `scripts/common.sh` resolves: `HATS_ROLE` → this session's file →
+`.hats/role`.
 
-Fixing G3 does not fix G2 — a session-scoped file is still a file the agent may
-write. They are separate debts and should be paid separately.
+The tie-breaker between the last two went wrong twice before it went right, and
+both wrongs are worth keeping written down:
 
-**Row:** `tests/role-store.test.sh`.
+1. **«newest file wins»** handed the fence back to whoever switched last —
+   every switch rewrites `.hats/role` too, so the shared file was always newest.
+   That was the original bug wearing a fix.
+2. It also made the rule a race against filesystem timestamp granularity. A
+   falsification caught it: mutating the tie-breaker changed no row, because
+   both writes landed in the same second and the branch was never reached. The
+   test was passing through a door it never opened.
+
+**CONTENT decides now, and deterministically.** `.hats/role` holds what we
+hold → ours. It holds what another session holds → that session switched, ours
+stands. It holds a value no session claims → a human wrote it by hand, theirs
+wins.
+
+**Known limit, pinned by a row:** a human hand-writing exactly the value some
+other live session already holds is indistinguishable from that session
+switching, and we keep ours. Timestamps could not have told them apart either.
+
+**Rows:** `tests/role-store.test.sh`, five falsifications (isolation off,
+other-session detection inverted both ways, env pin removed, env demoted).

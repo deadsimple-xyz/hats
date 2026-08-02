@@ -4,12 +4,14 @@
 
 INPUT=$(cat)
 
-ROLE_FILE=".hats/role"
-if [ ! -f "$ROLE_FILE" ]; then
+# shellcheck source=common.sh
+. "$(dirname "${BASH_SOURCE[0]}")/common.sh"
+
+ROLE=$(hats_role "$INPUT")
+if [ -z "$ROLE" ]; then
   exit 0
 fi
 
-ROLE=$(cat "$ROLE_FILE")
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty')
 
@@ -27,8 +29,6 @@ fi
 guard_block() {
   if [ -f ".hats/debug" ]; then
     LOG_DIR=".hats/logs"; mkdir -p "$LOG_DIR"
-    # shellcheck source=common.sh
-    . "$(dirname "${BASH_SOURCE[0]}")/common.sh"
     HV=$(hats_version)
     MODEL=$(hats_model "$INPUT")
     echo "{\"ts\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"hv\":\"$HV\",\"model\":\"$MODEL\",\"event\":\"write_block\",\"role\":\"$ROLE\",\"file\":\"$FILE_PATH\",\"tool\":\"$TOOL_NAME\",\"reason\":\"$1\"}" >> "$LOG_DIR/$(date -u +%Y-%m-%d).jsonl"
@@ -37,8 +37,27 @@ guard_block() {
   exit 2
 }
 
-# 1. Always allow writing .hats/role (role activation file)
+# 1. The role file — the one write that moves the fence itself.
+#
+# G2/G3. Two things happen here that did not before:
+#   * if HATS_ROLE pins the role, the switch is REFUSED. That is the whole
+#     point of the env rung: where the fence must be real, the fenced thing
+#     cannot relabel itself, and it is told so rather than silently ignored.
+#   * otherwise the switch is allowed (skills and humans both need it) and
+#     RECORDED — against this session, so a second session in the same repo
+#     keeps its own position, and in .hats/role-history, so a switch is never
+#     invisible afterwards.
 if echo "$FILE_PATH" | grep -q '\.hats/role$'; then
+  if [ -n "${HATS_ROLE:-}" ]; then
+    guard_block "the role is pinned to '${HATS_ROLE}' by HATS_ROLE for this session; a role cannot relabel itself here"
+  fi
+  # Write carries `content`, Edit carries `new_string`. Either way it is the
+  # role about to take effect.
+  NEW_ROLE=$(echo "$INPUT" | jq -r '.tool_input.content // .tool_input.new_string // empty' \
+             | tr -d '[:space:]')
+  if [ -n "$NEW_ROLE" ]; then
+    hats_record_role "$INPUT" "$NEW_ROLE" "$ROLE"
+  fi
   exit 0
 fi
 

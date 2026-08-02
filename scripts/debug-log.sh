@@ -9,9 +9,8 @@ INPUT=$(cat)
 # shellcheck source=common.sh
 . "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
-ROLE_FILE=".hats/role"
-ROLE="none"
-[ -f "$ROLE_FILE" ] && ROLE=$(cat "$ROLE_FILE")
+ROLE=$(hats_role "$INPUT")
+[ -n "$ROLE" ] || ROLE="none"
 
 LOG_DIR=".hats/logs"
 mkdir -p "$LOG_DIR"

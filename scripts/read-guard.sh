@@ -4,12 +4,14 @@
 
 INPUT=$(cat)
 
-ROLE_FILE=".hats/role"
-if [ ! -f "$ROLE_FILE" ]; then
+# shellcheck source=common.sh
+. "$(dirname "${BASH_SOURCE[0]}")/common.sh"
+
+ROLE=$(hats_role "$INPUT")
+if [ -z "$ROLE" ]; then
   exit 0
 fi
 
-ROLE=$(cat "$ROLE_FILE")
 TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty')
 
 # Read uses file_path, Glob uses pattern/path, Grep uses path/pattern
@@ -35,8 +37,6 @@ fi
 read_block() {
   if [ -f ".hats/debug" ]; then
     LOG_DIR=".hats/logs"; mkdir -p "$LOG_DIR"
-    # shellcheck source=common.sh
-    . "$(dirname "${BASH_SOURCE[0]}")/common.sh"
     HV=$(hats_version)
     MODEL=$(hats_model "$INPUT")
     echo "{\"ts\":\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\",\"hv\":\"$HV\",\"model\":\"$MODEL\",\"event\":\"read_block\",\"role\":\"$ROLE\",\"file\":\"$PATH_VAL\",\"tool\":\"$TOOL_NAME\",\"reason\":\"$1\"}" >> "$LOG_DIR/$(date -u +%Y-%m-%d).jsonl"
