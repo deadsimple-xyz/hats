@@ -55,8 +55,13 @@ case "$ROLE" in
   *) exit 0 ;;
 esac
 
+# The directory ITSELF must match, not only paths inside it. `$BLOCKED` entries
+# carry a trailing slash, so the old `grep "/${blocked}"` missed a path that
+# ends at the directory — and Grep/Glob are handed exactly that shape. The
+# fence looked closed and had a gap the width of one character.
 for blocked in $BLOCKED; do
-  if echo "$PATH_VAL" | grep -q "/${blocked}" || echo "$PATH_VAL" | grep -q "^${blocked}"; then
+  b=$(echo "${blocked%/}" | sed 's/\./\\./g')
+  if echo "$PATH_VAL" | grep -qE "(^|/)${b}(/|$)"; then
     read_block "${ROLE} cannot read ${blocked}"
   fi
 done
