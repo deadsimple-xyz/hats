@@ -37,9 +37,21 @@ die() { echo "task: $1" >&2; exit 1; }
 
 field() { sed -nE "s/^$2:[[:space:]]*(.*)$/\\1/p" "$1" | head -1; }
 
+# A folder name a human can read at a glance.
+#
+# NOT ASCII-only. The first version stripped every non-Latin byte, so a Russian
+# title produced an EMPTY slug and eleven tasks came out as `0001-`, `0002-`,
+# `0003-100`. For anyone not writing in English that is not an edge case, it is
+# every task they will ever file. git, macOS and Linux all carry UTF-8
+# filenames without complaint.
+#
+# `tr` is byte-oriented and would cut a multi-byte letter in half, so the
+# character classes are left to `sed` under a UTF-8 locale.
 slug() {
-  echo "$1" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' \
-    | sed -E 's/^-+//; s/-+$//' | cut -c1-40
+  LC_ALL=${LC_ALL:-en_US.UTF-8} echo "$1" \
+    | sed -E 's/[^[:alnum:]]+/-/g; s/^-+//; s/-+$//' \
+    | sed -E 's/^(.{1,40}).*/\1/; s/-+$//' \
+    | tr '[:upper:]' '[:lower:]'
 }
 
 cmd_new() {

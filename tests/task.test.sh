@@ -29,6 +29,20 @@ assert_true "the title survives as a title" grep -q '^# Runner is flaky on login
 assert_true "an index is generated"       test -f "$PROJECT/.hats/tasks/INDEX.md"
 assert_true "the index lists it"          grep -q "Runner is flaky on login" "$PROJECT/.hats/tasks/INDEX.md"
 
+# ── the folder name survives the language it was written in ──────────────────
+#
+# The first slug() stripped every non-Latin byte, so eleven Russian-titled
+# tasks came out as `0001-`, `0002-`, `0003-100`. For anyone not writing in
+# English that is not an edge case — it is every task they will ever file.
+RU=$(run_t new "Пустота перед ответом и залп пузырей" 2 lead)
+assert_true "a Cyrillic title keeps its words in the folder name" \
+  grep -q "пустота-перед-ответом" <<<"$RU"
+assert_true "the folder really exists under that name" test -d "$PROJECT/$RU"
+assert_true "and the title survives inside" \
+  grep -q "^# Пустота перед ответом" "$PROJECT/$RU/task.md"
+MIX=$(run_t new "Fix «залп» in the UI" 3 developer)
+assert_true "a mixed title keeps both halves" grep -qE "fix.*залп.*in-the-ui" <<<"$MIX"
+
 # ── gate 1: a task cannot close without ever being in work ───────────────────
 out=$(run_t status "$DIR" done) && code=0 || code=$?
 assert_eq "open -> done is refused"  "$code" "1"
