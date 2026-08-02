@@ -64,6 +64,16 @@ for f in package.json Package.swift requirements.txt go.mod Makefile \
   assert_read_allow "qa may read $f" qa "{\"file_path\":\"$PROJECT/$f\"}" Read
 done
 
+# THE PLUGIN'S OWN FILES. Caught on the first live exercise: the skill says
+# «read agents/qa.md» and the guard said no, so the role had to `cat` its own
+# instructions to find out what it was. A fence that blocks the rulebook is a
+# locked door with the rules behind it.
+for f in agents/qa.md agents/_shared/evidence.md agents/_shared/pipeline.md \
+         skills/qa/SKILL.md scripts/channel.sh; do
+  assert_read_allow "qa may read the plugin's own $f" qa \
+    "{\"file_path\":\"$HATS_ROOT/$f\"}" Read
+done
+
 # The escape hatch, because a fence with no gate gets torn down.
 assert_read_block "a project fixture is closed by default" qa \
   "{\"file_path\":\"$PROJECT/fixtures/users.json\"}" Read "writes tests from the SPEC"

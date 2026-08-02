@@ -33,6 +33,25 @@ Two shapes this catches, both seen in practice:
   the function short-circuited it);
 - the row asserted something that was true for an unrelated reason.
 
+## When there is nothing yet to break
+
+QA writes tests before the implementation exists, and cannot write in `src/` to
+break anything. The rule still holds; the thing you break is your own fixture.
+
+Point the suite at a module path you control — an environment variable, an
+injected stub, a fake — then:
+
+1. run against a **reference stub** that satisfies the spec: every row green;
+2. run against a **broken stub** with one behaviour inverted: exactly the row
+   that names that behaviour goes red, and no other;
+3. delete both, leave the suite pointing at the real module, and say what you
+   did in the Signature.
+
+That is not a workaround, it is the same rule at the only place it can be
+applied yet: you have shown which row watches which behaviour. This pattern was
+invented by a QA agent on 2026-08-02 because the rule demanded something the
+docs had not explained how to do — the gap was real, the answer was theirs.
+
 ## What a report owes
 
 A report is not prose about effort. Whatever the shape of your role's report,

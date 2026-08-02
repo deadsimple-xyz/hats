@@ -53,7 +53,7 @@ Editing the body of a task, writing `understanding.md`, writing
 ## Doing it
 
 ```bash
-H="$HATS_PLUGIN/scripts/task.sh"
+H="$HATS/scripts/task.sh"
 
 bash "$H" new "Runner is flaky on login" 1 developer @auth   # the Manager's job
 bash "$H" next                                                # the hottest open task

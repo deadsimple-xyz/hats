@@ -82,6 +82,18 @@ assert_true "a report owes what was checked"   grep -q "What was checked" agents
 assert_true "and what was concluded"           grep -q "What was concluded" agents/_shared/evidence.md
 assert_true "it forbids reporting unrun work"  grep -q "written, not yet run" agents/_shared/evidence.md
 assert_true "it asks for the number, verbatim" grep -q "give the number" agents/_shared/evidence.md
+assert_true "it says how to falsify before an implementation exists" \
+  grep -q "nothing yet to break" agents/_shared/evidence.md
+assert_true "and names the reference/broken stub pattern" \
+  grep -q "broken stub" agents/_shared/evidence.md
+
+# ── the helpers can actually be found ─────────────────────────────────────────
+# The docs named `$HATS_PLUGIN` and nothing set it; a live role went hunting
+# through the filesystem for the plugin root.
+assert_true "no doc names a variable nobody sets" \
+  bash -c '! grep -rl "HATS_PLUGIN/scripts" agents/ README.md MIGRATIONS.md 2>/dev/null | grep -q .'
+assert_true "the channel discipline says how to locate the scripts" \
+  grep -q "HATS=" agents/_shared/channels.md
 
 # ── the QA report carries a signature, not prose about effort ─────────────────
 assert_true "the report template has a Signature block" grep -q "^## Signature" agents/qa.md

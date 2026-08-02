@@ -64,7 +64,9 @@ Then each role takes over:
 | **QA** | `.hats/shared/`, `.hats/qa/` | `.hats/qa/`, `.hats/shared/qa-report.md`, `qa2dev.md`, `qa2designer.md`, `test-contract.md` |
 | **Developer** | `.hats/shared/` + project root | project root, `.hats/shared/setup.md`, `api.md`, `dev2qa.md`, `dev2designer.md` |
 
-Permissions are enforced by hooks -- the Developer literally *can't* read tests, and the QA *can't* read source code. Both halves are checked by rows in `tests/read-guard.test.sh`; the QA half was prose until 5.0.0, which is precisely why the tests exist. QA writes a plain-language report (`.hats/shared/qa-report.md`) so the Developer understands what failed and why, without seeing test code.
+Permissions are enforced by hooks -- the Developer literally *can't* read tests, and the QA *can't* read source code. Both halves are checked by rows in `tests/read-guard.test.sh`; the QA half was prose until 5.0.0, which is precisely why the tests exist.
+
+**Know the edge of that guarantee.** The hooks match the file tools — `Write`, `Edit`, `Read`, `Glob`, `Grep`. **Bash is not matched**, so a role that reaches for a shell can read and write anything: `cat src/app.ts` works, and so does `echo … > file`. Roles need Bash constantly and legitimately, and deciding what an arbitrary command will touch means parsing a shell — so this is a known edge rather than an oversight (`tests/KNOWN-GAPS.md`, G3). The fences shape what a role does by default; they are not a sandbox. QA writes a plain-language report (`.hats/shared/qa-report.md`) so the Developer understands what failed and why, without seeing test code.
 
 ## Project Structure
 
@@ -124,9 +126,9 @@ Three gates, enforced by the hook rather than asked for in a prompt:
   concluded. The next person's question is «how do you know».
 
 ```bash
-bash "$HATS_PLUGIN/scripts/task.sh" new "Runner is flaky on login" 1 developer @auth
-bash "$HATS_PLUGIN/scripts/task.sh" next
-bash "$HATS_PLUGIN/scripts/task.sh" status .hats/tasks/0042-runner-flaky-on-login in_progress
+bash "$HATS/scripts/task.sh" new "Runner is flaky on login" 1 developer @auth
+bash "$HATS/scripts/task.sh" next
+bash "$HATS/scripts/task.sh" status .hats/tasks/0042-runner-flaky-on-login in_progress
 ```
 
 Editing `task.md` by hand works too and is gated identically — the helper is a
@@ -155,7 +157,7 @@ projects by their second month.
 Migrate an existing project with `/hats:doctor`, or by hand:
 
 ```bash
-bash "$HATS_PLUGIN/scripts/channel.sh" split .hats/shared/qa2dev.md
+bash "$HATS/scripts/channel.sh" split .hats/shared/qa2dev.md
 ```
 
 The split is verified byte-for-byte before anything is written, and the
@@ -167,7 +169,7 @@ Write with the same helper, which numbers, dates, names you and refreshes the
 index:
 
 ```bash
-echo "Runner is green." | bash "$HATS_PLUGIN/scripts/channel.sh" \
+echo "Runner is green." | bash "$HATS/scripts/channel.sh" \
   append .hats/shared/qa2dev QA
 ```
 

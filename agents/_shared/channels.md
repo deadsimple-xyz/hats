@@ -47,13 +47,27 @@ the flat file is still the channel — read it, and say once that
 Reading it means reading everything twice. Leave it alone unless you are
 looking for something specific and old.
 
+## Finding the helpers
+
+The scripts live inside the plugin, and nothing exports its path into your
+shell. One line, at the top of any Bash call that needs them:
+
+```bash
+HATS=$(ls -d ~/.claude/plugins/*/hats*/ 2>/dev/null | head -1); \
+  [ -d "$HATS" ] || HATS=~/Code/hats
+```
+
+Caught on the first live exercise: the docs named a variable that nothing in
+the world sets, and the role went hunting through the filesystem for the plugin
+root. Say where a thing is, or do not name it.
+
 ## Writing
 
 Use the helper. It numbers the entry, dates it, names you, and refreshes the
 index:
 
 ```bash
-echo "your message body" | bash "$HATS_PLUGIN/scripts/channel.sh" \
+echo "your message body" | bash "$HATS/scripts/channel.sh" \
   append .hats/shared/qa2dev QA
 ```
 

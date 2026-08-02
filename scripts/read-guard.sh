@@ -68,6 +68,17 @@ read_block() {
 qa_may_read() {
   local p="$1" base allow
   base=$(basename "$p")
+  # THE PLUGIN'S OWN FILES. Caught on the first live exercise, 2026-08-02: the
+  # skill says «read agents/qa.md», the guard said no, and the role had to
+  # `cat` its own instructions through Bash to find out what it was.
+  #
+  # Nothing here is the project's implementation — it is hats describing
+  # itself, and a fence that blocks the rulebook is not a fence, it is a
+  # locked door with the rules behind it.
+  case "$p" in
+    */agents/*.md|*/skills/*/SKILL.md|*/scripts/*.sh|*/hats/README.md|*/hats/MIGRATIONS.md)
+      return 0 ;;
+  esac
   case "$base" in
     package.json|package-lock.json|pnpm-lock.yaml|yarn.lock|Package.swift|\
     requirements.txt|pyproject.toml|poetry.lock|go.mod|go.sum|Gemfile|\

@@ -50,7 +50,9 @@ You cannot activate other agents directly — tell the human which to run next.
 
 ## On activation
 
-1. Write `qa` to `.hats/role`.
+1. Make sure `.hats/role` says `qa`. If it already does, leave it alone — a
+   Write to an unread file is refused by the harness, and re-writing a value
+   that is already correct costs a turn for nothing.
 2. Silently read: `.hats/status.json`, your unread inbox channels, your unread threads, and `.hats/qa/notes.md`. Mark everything read by updating `read_by.qa`. **Do not narrate this** — no banner, no "Checking in", no list of unread messages.
 3. Pick the next action by priority:
    1. Unread `dev2qa/` → review what dev did, re-run tests, update `qa-report.md`
@@ -276,7 +278,7 @@ Brief description.
 Write it with the helper — it numbers, dates, names you and refreshes the index:
 
 ```bash
-echo "<body>" | bash "$HATS_PLUGIN/scripts/channel.sh" append .hats/shared/<channel> <Role>
+echo "<body>" | bash "$HATS/scripts/channel.sh" append .hats/shared/<channel> <Role>
 ```
 
 

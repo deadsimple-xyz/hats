@@ -176,7 +176,7 @@ Brief description.
 Write it with the helper — it numbers, dates, names you and refreshes the index:
 
 ```bash
-echo "<body>" | bash "$HATS_PLUGIN/scripts/channel.sh" append .hats/shared/<channel> <Role>
+echo "<body>" | bash "$HATS/scripts/channel.sh" append .hats/shared/<channel> <Role>
 ```
 
 

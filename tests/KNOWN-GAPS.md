@@ -124,3 +124,55 @@ switching, and we keep ours. Timestamps could not have told them apart either.
 
 **Rows:** `tests/role-store.test.sh`, five falsifications (isolation off,
 other-session detection inverted both ways, env pin removed, env demoted).
+
+---
+
+## G3 — every fence is a Write/Edit/Read fence, and Bash walks around all of them
+
+Found by a QA agent on its first live turn under 5.0.0, unprompted, while
+explaining what had got in its way:
+
+> «хук матчит только Read|Glob|Grep, Bash не гарден вообще — забор для QA
+> фактически совещательный»
+
+Verified immediately, and it is exactly right:
+
+| through Bash | result |
+|---|---|
+| `cat src/counter.ts` as QA | allowed |
+| `echo x > src/counter.ts` as QA | allowed |
+| `echo done > .hats/tasks/*/task.md` | allowed — all three task gates skipped |
+
+`hooks.json` matches `Write|Edit` and `Read|Glob|Grep`. Bash is matched only by
+the debug logger, which never blocks. So every guarantee in this project holds
+for a role that uses the file tools, and evaporates for one that uses a shell.
+
+**Why it is not simply fixed by adding `Bash` to the matcher.** A command line
+is not a path. `cat a b c`, `sh -c '…'`, a heredoc, `find -exec`, a Makefile
+target, `npm test` — deciding what a command will touch means parsing a shell,
+and a parser that is 95% right is a fence with a hole whose shape nobody knows.
+Worse, roles need Bash constantly and legitimately: `run-tests.sh`, `git`,
+`npm`, the helpers this plugin ships.
+
+**What is worth doing, in order:**
+
+1. **Say it out loud.** The README implies the fences are absolute. They are
+   absolute for the file tools. That sentence belongs in the README, because a
+   guarantee people misread is worse than one they know the edges of.
+2. **Cheap, narrow interception** for the shapes that are unambiguous and
+   actually observed: a redirect into a path the role may not write
+   (`> .hats/qa/...`), a bare `cat`/`head`/`tail` of a blocked directory. Not a
+   parser — a handful of patterns that fail OPEN on anything they do not
+   understand, so the fence never blocks legitimate work it merely fails to
+   recognise.
+3. **Audit before enforcement.** Log Bash commands that touch blocked paths for
+   a while, look at what real roles actually do, and only then decide what to
+   refuse. Guessing at this in advance is how a discipline becomes a jam — this
+   project has paid for that once already.
+
+Not attempted today: (2) and (3) are a step of their own, and doing them badly
+is worse than the honest sentence in (1).
+
+**Row:** none yet — deliberately. A row that asserted «Bash is unguarded» would
+lock in the defect as intended behaviour. This entry is the record until the
+step happens.
