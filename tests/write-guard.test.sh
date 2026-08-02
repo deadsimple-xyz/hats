@@ -77,4 +77,22 @@ assert_block "an unknown role cannot write source"  $G solo "$PROJECT/src/index.
 assert_allow "an unknown role may write inside .hats/" $G solo "$PROJECT/.hats/shared/notes.md"
 assert_allow "an unknown role is not held to the mailbox list" $G solo "$PROJECT/.hats/shared/stack.md"
 
+# ── channels are directories now, and ownership did not move ─────────────────
+# `shared/qa2dev.md` became `shared/qa2dev/0143-2026-08-02-qa.md`. The rules
+# below know channels by basename, so without the reduction in guard.sh every
+# write to the new shape would be refused and the migration would strand.
+mkdir -p "$PROJECT/.hats/shared"/{qa2dev,dev2qa,manager2team}
+assert_allow "qa writes an entry into its own channel"   $G qa        "$PROJECT/.hats/shared/qa2dev/0143-2026-08-02-qa.md"
+assert_block "developer cannot write into qa's channel"  $G developer "$PROJECT/.hats/shared/qa2dev/0143-2026-08-02-qa.md" "Developer can only write"
+assert_allow "developer writes an entry into dev2qa"     $G developer "$PROJECT/.hats/shared/dev2qa/0007-2026-08-02-developer.md"
+assert_block "qa cannot write into dev2qa"               $G qa        "$PROJECT/.hats/shared/dev2qa/0007-2026-08-02-developer.md" "QA can only write"
+assert_allow "manager writes into manager2team"          $G manager   "$PROJECT/.hats/shared/manager2team/0064-2026-08-02-manager.md"
+assert_block "cto cannot write into manager2team"        $G cto       "$PROJECT/.hats/shared/manager2team/0064-2026-08-02-manager.md" "CTO can only write"
+assert_block "channel entries take .md only"             $G qa        "$PROJECT/.hats/shared/qa2dev/notes.txt" "must end .md"
+# The generated files live in the channel and belong to whoever owns it.
+assert_allow "the channel owner may write its INDEX.md"  $G qa        "$PROJECT/.hats/shared/qa2dev/INDEX.md"
+assert_block "and nobody else may"                       $G developer "$PROJECT/.hats/shared/qa2dev/INDEX.md" "Developer can only write"
+# The old flat shape keeps working — projects migrate when they choose to.
+assert_allow "the pre-migration flat file still works"   $G qa        "$PROJECT/.hats/shared/qa2dev.md"
+
 summary

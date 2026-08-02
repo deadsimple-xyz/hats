@@ -88,6 +88,23 @@ if echo "$FILE_PATH" | grep -q "\.hats/shared/threads/"; then
   fi
 fi
 
+# 4a-bis. Channels are DIRECTORIES now (scripts/channel.sh). `shared/qa2dev.md`
+# became `shared/qa2dev/0143-....md`, so the basename check below — which knows
+# only `qa2dev.md` — would refuse every write to the new shape and quietly
+# strand the migration. Ownership is unchanged: the channel's name still says
+# who may write it. Only the shape moved.
+#
+# Reduce `shared/<channel>/<entry>.md` to `shared/<channel>.md` and let the
+# existing per-role rules decide, so there is exactly one place that knows who
+# owns which channel.
+CHANNEL_DIR=$(echo "$FILE_PATH" | sed -nE 's#.*\.hats/shared/([a-z0-9]+2[a-z0-9]+)/.*#\1#p')
+if [ -n "$CHANNEL_DIR" ]; then
+  if ! echo "$FILE_PATH" | grep -qE '\.md$'; then
+    guard_block "entries in shared/${CHANNEL_DIR}/ must end .md"
+  fi
+  FILE_PATH="$(dirname "$(dirname "$FILE_PATH")")/${CHANNEL_DIR}.md"
+fi
+
 # 4b. Per-role blocked dirs and shared/ file restrictions
 # Shared subdirectories: specs/ is owned by manager, designs/ is owned by designer
 case "$ROLE" in
