@@ -170,9 +170,31 @@ Worse, roles need Bash constantly and legitimately: `run-tests.sh`, `git`,
    refuse. Guessing at this in advance is how a discipline becomes a jam — this
    project has paid for that once already.
 
-Not attempted today: (2) and (3) are a step of their own, and doing them badly
-is worse than the honest sentence in (1).
+**(1) and (3) are DONE (2026-08-02).** The README now names the edge, and
+`scripts/bash-audit.sh` is hooked on `Bash`: it records a line in
+`.hats/bash-audit.jsonl` when a role's command names a directory that role
+cannot touch through the file tools, distinguishing a redirect (write-shaped)
+from anything else (read-shaped). **It never refuses.** Ordinary work —
+`npm test`, `git status`, the role's own runner — leaves no line, or the log is
+noise nobody reads.
 
-**Row:** none yet — deliberately. A row that asserted «Bash is unguarded» would
-lock in the defect as intended behaviour. This entry is the record until the
-step happens.
+The vocabulary is deliberately the SAME as the guards', so the audit measures
+that rule rather than offering a second opinion about it. And it is not behind
+the debug flag: the day you want this log is the day nobody thought to turn
+logging on.
+
+**(2) is still open, and stays open until there is data.** What to refuse
+should come from what real roles actually reach for, not from what I can
+imagine tonight. Look at `.hats/bash-audit.jsonl` after a few real days; the
+shapes that appear and are never legitimate are the candidates, and each one
+gets its own row and its own falsification before it blocks anything.
+
+**Rows:** `tests/bash-audit.test.sh` — six commands proving it never refuses
+and says nothing to the role, the three live-observed shapes being recorded
+with role and reason, ordinary work leaving no line, one line per command
+rather than one per matching directory, and an unknown role left alone.
+Four falsifications: recording removed → 5 red; write/read no longer
+distinguished → 2; the audit made to refuse → 6; recording everything → 4.
+
+Still true, and still the point: **a row asserting «Bash is unguarded» is not
+written**, because it would lock the defect in as intended behaviour.
