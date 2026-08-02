@@ -21,9 +21,13 @@ HV=$(hats_version)
 MODEL=$(hats_model "$INPUT")
 
 TOOL=$(echo "$INPUT" | jq -r '.tool_name // empty')
+# The session this call belongs to. `.hats/role` is per-DIRECTORY, so two
+# sessions in one repo share one role; logging the session is the first step
+# to telling them apart at all.
+SID=$(echo "$INPUT" | jq -r '.session_id // "?"' | cut -c1-8)
 
 # Common JSON prefix — all log lines start with these fields.
-META="\"ts\":\"$TS\",\"hv\":\"$HV\",\"model\":\"$MODEL\",\"role\":\"$ROLE\""
+META="\"ts\":\"$TS\",\"hv\":\"$HV\",\"model\":\"$MODEL\",\"sid\":\"$SID\",\"role\":\"$ROLE\""
 
 # Redact common secret shapes from a string before it lands in the JSONL.
 # Reads stdin, writes stdout. Conservative — only patterns with a stable prefix.

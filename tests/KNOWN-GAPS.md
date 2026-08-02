@@ -43,3 +43,59 @@ fail for the stated reason; unblock the allow-list entry, watch it pass).
 
 **Row:** `tests/read-guard.test.sh` — «qa cannot read source (README's central
 claim)».
+
+---
+
+## G2 — a role can take off its own fence in one write
+
+**Sequence, entirely within the rules as written:**
+
+1. role is `qa`; a write to `src/` is refused;
+2. `qa` writes `developer` into `.hats/role` — permitted by rule 1 of
+   `guard.sh`, unconditionally, because roles must be able to switch;
+3. the same write to `src/` now passes.
+
+**Why the door exists.** It is the same door the human uses. `/hats:qa` is a
+skill whose instruction is «write `qa` to `.hats/role`» — the switch is
+performed BY the agent, so the file must be writable by the agent. The fence
+cannot tell the operator from the thing being fenced.
+
+**What this does and does not mean.** It is not an exploit; nothing is hiding.
+It means the role system is a convention with a mechanism attached, not a
+mechanism. Every guarantee in the README holds exactly as long as the model
+follows the instruction not to relabel itself — which is the shape this project
+already names elsewhere: *an instruction is not a mechanism*.
+
+**Options, none free:**
+
+- **`HATS_ROLE` in the environment.** Strongest: a process cannot rewrite the
+  env its parent gave it, so the position of the fence moves outside the reach
+  of the thing being fenced. Cost: one session, one role — mid-session
+  switching goes away, and per-role subagents all inherit the parent's value.
+- **Handoff rules.** Permit only the switches the pipeline actually needs and
+  refuse the rest (notably `qa` → `developer`, the pair that must never see
+  each other). Cheap, partial, and it fights the README's «talk to any role at
+  any time».
+- **Audit only.** Log every switch with its session; let `doctor` and the tests
+  show «the role flipped 47 times today». Prevents nothing, reveals everything.
+
+**Row:** `tests/role-store.test.sh`.
+
+---
+
+## G3 — the role is ambient: two sessions in one repo share one fence
+
+`.hats/role` is per-DIRECTORY. Two Claude Code sessions in the same repo — one
+per product, a subagent beside its parent, an autopilot beside a human — read
+and write the same byte. The second session's switch silently re-aims the
+first session's fence, and neither is told.
+
+**This one is a plain bug, and it has a plain fix.** Hooks receive `session_id`
+(verified on a live log line: `"sid":"8de5645b"`, matching the running
+session). Storing the role at `.hats/sessions/<session_id>` gives every session
+its own position, with no change to how switching feels.
+
+Fixing G3 does not fix G2 — a session-scoped file is still a file the agent may
+write. They are separate debts and should be paid separately.
+
+**Row:** `tests/role-store.test.sh`.
