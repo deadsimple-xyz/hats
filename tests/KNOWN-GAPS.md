@@ -9,42 +9,38 @@ Registered with `gap <id> <assertion>` in the test files.
 
 ---
 
-## G1 — the QA can read source code
+## G1 — the QA can read source code — **CLOSED in 5.0.0**
 
-**Promised** (README, verbatim):
+The README sold it as the product: «the Developer literally can't read tests,
+and the QA can't read source code». Only the first half was ever enforced —
+`read-guard.sh` had `qa) BLOCKED=""`, an empty list. QA could read every line
+of the implementation.
 
-> Permissions are enforced by hooks — the Developer literally *can't* read
-> tests, and the QA *can't* read source code.
+Not a detail: it is the thesis. Roles are split so QA writes tests from the
+SPEC and cannot inherit the implementation's blind spots. A QA that has read
+the code tests what the code does — the exact failure the split exists to
+prevent, wearing a badge that says it was prevented.
 
-**Actual:** `scripts/read-guard.sh` sets `qa) BLOCKED=""`. The developer half is
-enforced (`developer) BLOCKED=".hats/qa/"`), the QA half is not. QA can read
-every line of the implementation.
+**Closed with an ALLOW-list, not a block-list**, because «the implementation»
+has no fixed name — it is whatever a project calls its directories. So for QA
+the project root is closed, and a short list is opened: manifests
+(`package.json`, `Package.swift`, `go.mod`, …), test configs, `Makefile`,
+`docker-compose.yml`, `tsconfig.json`, `.env.example`, `README.md`. Everything
+under `.hats/` is untouched — specs, stack, designs, its own tests, the
+channels.
 
-**Why it matters.** This is not a detail — it is the thesis. The whole point of
-splitting the roles is that QA writes tests from the SPEC, so it cannot inherit
-the implementation's blind spots. A QA that has read the code tests what the
-code does, which is exactly the failure mode hats exists to prevent, wearing a
-badge that says it has been prevented.
+Anything else QA needs belongs in `stack.md` or `setup.md`, which is what those
+files are for. The refusal says so, and says how to widen the list.
 
-**Why it is not fixed in the same breath as it was found.** Closing it is a
-behaviour change for every existing project, and the blast radius needs a
-minute's thought rather than a reflex:
+**Escape hatch, on purpose:** `.hats/qa/read-allow`, one glob per line, widens
+it per project. A fence with no gate gets torn down; a fence with a gate that
+has to be written down stays up.
 
-- QA legitimately needs *some* things at the project root — `package.json` to
-  know the runner, config to know ports, `setup.md` for how to start the app.
-  A blanket block on everything outside `.hats/` would break test generation
-  on day one.
-- So the fix is a list, not a switch: block source directories, allow the
-  handful of files QA must see, and let `stack.md` / `setup.md` carry anything
-  else it needs — which is what those files are for.
-
-Belongs to its own step, with its own falsification (block it, watch a QA run
-fail for the stated reason; unblock the allow-list entry, watch it pass).
-
-**Row:** `tests/read-guard.test.sh` — «qa cannot read source (README's central
-claim)».
-
----
+**Rows:** `tests/read-guard.test.sh` — the refusal on source (by `Read` and by
+`Grep`), twelve manifests and configs that stay open, the escape hatch opening
+exactly what it lists and nothing else, and the three other roles losing
+nothing. Four falsifications: fence removed → 7 red; allow-list emptied → 12;
+escape hatch ignored → 1; `.hats/` swept into the block → 3.
 
 ## G2 — a role can take off its own fence in one write
 

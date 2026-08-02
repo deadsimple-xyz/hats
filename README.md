@@ -64,7 +64,7 @@ Then each role takes over:
 | **QA** | `.hats/shared/`, `.hats/qa/` | `.hats/qa/`, `.hats/shared/qa-report.md`, `qa2dev.md`, `qa2designer.md`, `test-contract.md` |
 | **Developer** | `.hats/shared/` + project root | project root, `.hats/shared/setup.md`, `api.md`, `dev2qa.md`, `dev2designer.md` |
 
-Permissions are enforced by hooks -- the Developer literally *can't* read tests, and the QA *can't* read source code. QA writes a plain-language report (`.hats/shared/qa-report.md`) so the Developer understands what failed and why, without seeing test code.
+Permissions are enforced by hooks -- the Developer literally *can't* read tests, and the QA *can't* read source code. Both halves are checked by rows in `tests/read-guard.test.sh`; the QA half was prose until 5.0.0, which is precisely why the tests exist. QA writes a plain-language report (`.hats/shared/qa-report.md`) so the Developer understands what failed and why, without seeing test code.
 
 ## Project Structure
 

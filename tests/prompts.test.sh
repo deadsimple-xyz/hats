@@ -91,6 +91,12 @@ assert_true "it asks what was falsified"  grep -q "^- Falsified:" agents/qa.md
 assert_true "and says a green never seen failing is not evidence" \
   grep -q "not evidence" agents/qa.md
 
+# ── QA is told about its own fence, not just fenced ───────────────────────────
+assert_true "qa is told it cannot read source"  grep -q "cannot read the project's source" agents/qa.md
+assert_true "and what stays open"               grep -q "Manifests, test configs" agents/qa.md
+assert_true "and where to put the rest"         grep -q "stack.md\` or \`setup.md" agents/qa.md
+assert_true "and the escape hatch"              grep -q "read-allow" agents/qa.md
+
 # ── doctor knows about the migration and about sizes ──────────────────────────
 assert_true "doctor offers the channel migration" grep -q "channel.sh" skills/doctor/SKILL.md
 assert_true "doctor checks status.json size"      grep -q "status.json.* over 4 KB" skills/doctor/SKILL.md

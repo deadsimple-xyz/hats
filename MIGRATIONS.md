@@ -30,6 +30,26 @@ live projects — 35 channels of 35 migrated with no loss.
 Un-migrated projects keep working: the guard still accepts the flat file, and
 the prompts tell a role what to do if it finds one.
 
+### QA can no longer read the project's source
+
+The README always said «the QA can't read source code». It was never enforced —
+`read-guard.sh` had `qa) BLOCKED=""`. It is enforced now, as an ALLOW-list:
+the project root is closed to QA, and manifests, test configs, `Makefile`,
+`docker-compose.yml`, `tsconfig.json`, `.env.example` and `README.md` are open.
+Everything under `.hats/` is untouched.
+
+**This can bite an existing project.** If your QA needs a file at the root that
+is not on the list, the read is refused with a message naming the file to
+create:
+
+```bash
+echo '*/fixtures/*' >> .hats/qa/read-allow
+```
+
+One glob per line. The better fix is usually to put what QA needs into
+`stack.md` or `setup.md` — that is what those files are for — but the hatch is
+there so nobody has to tear the fence down to get through it.
+
 ### Tasks
 
 New: `.hats/tasks/`, one folder per task, in git. Nothing to migrate — the
