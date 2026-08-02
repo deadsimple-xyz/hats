@@ -45,6 +45,8 @@ Create the missing directories and files (do NOT overwrite existing files):
   venv/
   .env
   .hats/role
+  .hats/sessions/
+  .hats/role-history
   .hats/logs/
   .hats/debug
   *.log

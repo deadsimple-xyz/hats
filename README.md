@@ -85,19 +85,77 @@ my-app/
       api.md           API conventions (CTO/Developer)
       test-contract.md qa attributes & expectations (QA)
       qa-report.md     Test results for Developer (QA)
-      manager2team.md  Manager → team announcements
-      cto2team.md      CTO → team stack announcements
-      designer2team.md Designer → team responses
-      qa2dev.md        QA → Developer messages
-      dev2qa.md        Developer → QA messages
-      dev2designer.md  Developer → Designer questions
-      qa2designer.md   QA → Designer questions
+      manager2team/    Manager -> team           one file per entry
+      cto2team/        CTO -> team               + INDEX.md, newest first
+      designer2team/   Designer -> team
+      qa2dev/          QA -> Developer
+      dev2qa/          Developer -> QA
+      dev2designer/    Developer -> Designer
+      qa2designer/     QA -> Designer
+      threads/         any role may append (conversations)
+    tasks/           what is being worked on, one folder per task
     status.json      Current state and message counters
     role             Active role (managed by hooks)
   src/               Your code lives at project root
 ```
 
+## Channels are directories
+
+Each channel is a directory of entries plus a generated `INDEX.md`, newest
+first:
+
+```
+.hats/shared/qa2dev/
+  INDEX.md                  read this
+  0246-2026-07-30-qa.md     one entry, one subject
+  0245-2026-07-30-qa.md
+  ARCHIVE.md                everything as it was before migration
+```
+
+**Why.** A channel used to be one file, appended at the bottom. `Read` returns
+the first 2000 lines and the roles are told never to `tail`. Measured on a live
+project: `qa2dev.md` held 15 entries spanning `[40]..[51]`, and a role
+following its own instructions saw 6 of them and stopped at `[42]`. Nine
+entries were read by nobody, ever. It goes wrong at about 130 KB — most
+projects by their second month.
+
+Migrate an existing project with `/hats:doctor`, or by hand:
+
+```bash
+bash "$HATS_PLUGIN/scripts/channel.sh" split .hats/shared/qa2dev.md
+```
+
+The split is verified byte-for-byte before anything is written, and the
+original is kept as `ARCHIVE.md`. Run across six live projects: 35 channels of
+35 migrated with no loss, and what a role reads on activation went from 2894 KB
+to 119 KB of index.
+
+Write with the same helper, which numbers, dates, names you and refreshes the
+index:
+
+```bash
+echo "Runner is green." | bash "$HATS_PLUGIN/scripts/channel.sh" \
+  append .hats/shared/qa2dev QA
+```
+
+## Roles, sessions and the fence
+
+The active role lives in `.hats/role`, and the guards read it. Two things worth
+knowing:
+
+- **`HATS_ROLE` pins the role.** Set it in the environment and the role cannot
+  be changed from inside the session — a write to `.hats/role` is refused and
+  says why. Use it wherever the fence must be real: autopilot, spawned per-role
+  sessions, CI. Without it the door stays open, because the same door is how a
+  human switches roles.
+- **The role is per-session.** Two Claude Code sessions in one repo used to
+  share one role file, so the second session's switch silently re-aimed the
+  first one's fence. Each session now keeps its own position, and every switch
+  appends a line to `.hats/role-history` — audit that is not behind the debug
+  flag.
+
 ## Debug Logging
+
 
 Enable debug logging to see exactly what each role does — every tool use, command, file read/write, and guard block:
 

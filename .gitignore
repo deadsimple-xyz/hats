@@ -4,3 +4,5 @@ venv/
 .env
 *.log
 .DS_Store
+.hats/sessions/
+.hats/role-history

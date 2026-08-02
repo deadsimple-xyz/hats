@@ -116,15 +116,49 @@ Inspect the project root and print a checklist report. Mark each item as **ok**,
 
 Check all role directories for `.hats-*` symlinks. If any exist, flag them as **stale** — they should be removed.
 
-### Messaging files in `.hats/shared/`
+### Channels in `.hats/shared/`
 
-- `.hats/shared/manager2team.md` exists (create empty if missing)
-- `.hats/shared/cto2team.md` exists (create empty if missing)
-- `.hats/shared/qa2dev.md` exists (create empty if missing)
-- `.hats/shared/dev2qa.md` exists (create empty if missing)
-- `.hats/shared/dev2designer.md` exists (create empty if missing)
-- `.hats/shared/qa2designer.md` exists (create empty if missing)
-- `.hats/shared/designer2team.md` exists (create empty if missing)
+Each of `manager2team`, `cto2team`, `designer2team`, `qa2dev`, `dev2qa`,
+`dev2designer`, `qa2designer` should exist as a **directory** with an
+`INDEX.md`. Create the directory if missing.
+
+**If you find the flat `<channel>.md` instead, that is the migration and it is
+not cosmetic.** A channel is appended at the bottom, `Read` returns the first
+2000 lines, and the roles are told never to `tail` — so past roughly 130 KB the
+newest entries are read by nobody, ever. Measured on a live project: 15 entries
+in the file, 6 reachable.
+
+Offer it, one command per channel, and say what it does:
+
+```
+Found 3 flat channels (qa2dev.md 985K, dev2qa.md 610K, manager2team.md 520K).
+Roles reading these see entries from two weeks ago and nothing since.
+
+Migrate? Each becomes a directory of entries plus an index; the original is
+kept as ARCHIVE.md and the split is verified byte-for-byte before anything is
+written.
+```
+
+Then, on a yes, per channel:
+
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/channel.sh" split .hats/shared/<channel>.md
+```
+
+### Sizes — the check nobody had
+
+A structure can be perfectly correct and still unreadable. Report, do not just
+list:
+
+- any channel `INDEX.md` over 100 KB, or any channel with more than 500
+  entries → say the index itself now needs paging
+- `.hats/status.json` over 4 KB → it is a state file, not a channel; something
+  is writing narrative into it (seen in the wild at 106 KB)
+- any `shared/*.md` document over 200 KB (`stack.md`, `test-contract.md`) →
+  history is being appended to a file that is supposed to describe the present
+- any role directory containing `node_modules/`, build output, or anything
+  over 10 MB
+- `.hats/logs/` older than 30 days, or over 5 MB
 - `.hats/shared/test-contract.md` exists (only if `.hats/qa/` has test files — skip if no tests yet)
 
 ### Per-role scratchpads

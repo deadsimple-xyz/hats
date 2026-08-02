@@ -2,6 +2,62 @@
 
 The doctor reads this file to upgrade old Hats projects.
 
+## 4.4.0 → 5.0.0
+
+### Channels are directories, not one growing file
+
+`.hats/shared/<channel>.md` becomes `.hats/shared/<channel>/` — one file per
+entry, plus a generated `INDEX.md` (newest first), plus `ARCHIVE.md` holding
+the original untouched.
+
+**Why this is not cosmetic.** A channel is appended at the bottom, `Read`
+returns the first 2000 lines, and the role prompts say «NEVER use
+cat/head/tail». Measured on design-gpt: `qa2dev.md` held 15 entries spanning
+`[40]..[51]`; a role following its instructions saw 6 and stopped at `[42]`.
+Nine entries out of fifteen were read by nobody, ever. The failure starts at
+about 130 KB, which is most projects by their second month.
+
+Per channel:
+
+```bash
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/channel.sh" split .hats/shared/qa2dev.md
+```
+
+The split verifies itself: entries are concatenated back and compared with the
+original byte for byte, and nothing is written if they differ. Run over six
+live projects — 35 channels of 35 migrated with no loss.
+
+Un-migrated projects keep working: the guard still accepts the flat file, and
+the prompts tell a role what to do if it finds one.
+
+### The role is per-session, and `HATS_ROLE` pins it
+
+`.hats/role` was per-DIRECTORY, so two sessions in one repo shared one fence
+and the second session's switch silently re-aimed the first one's. Each session
+now records its own position under `.hats/sessions/<session_id>`; resolution is
+`HATS_ROLE` → this session → `.hats/role`.
+
+Set `HATS_ROLE` where the fence must be real (autopilot, spawned per-role
+sessions, CI): a write to `.hats/role` is then refused with a refusal that
+names the pin. Every switch appends to `.hats/role-history`, and that audit is
+deliberately not behind the debug flag.
+
+Nothing to run. Old projects work unchanged; `.hats/sessions/` appears on its
+own. Add `.hats/sessions/` and `.hats/role-history` to `.gitignore`.
+
+### Shared prompt fragments
+
+`agents/_shared/pipeline.md` (the whole route, capability map, what «done»
+means) and `agents/_shared/channels.md` (how channels are read and written) are
+now read by every role at activation. Nothing to migrate — they ship with the
+plugin.
+
+### hats has tests
+
+`bash tests/run.sh`. No framework to install. Known gaps are registered in
+`tests/KNOWN-GAPS.md`: they print on every run, do not fail it, and DO fail it
+the day they start passing.
+
 ## 4.3.5 → 4.4.0
 
 ### Decision records + reopen triggers (FPF-lite)
