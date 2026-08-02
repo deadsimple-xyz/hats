@@ -111,6 +111,7 @@ Inspect the project root and print a checklist report. Mark each item as **ok**,
 - `.hats/shared/specs/` (Manager's .feature files)
 - `.hats/shared/designs/` (Designer's mockups)
 - `.hats/shared/threads/` (any-role topic memos)
+- `.hats/tasks/` (what is being worked on)
 
 ### Stale symlinks (should NOT exist)
 
@@ -144,6 +145,19 @@ Then, on a yes, per channel:
 ```bash
 bash "${CLAUDE_PLUGIN_ROOT}/scripts/channel.sh" split .hats/shared/<channel>.md
 ```
+
+### Tasks
+
+`.hats/tasks/` should exist with an `INDEX.md`. Create it if missing.
+
+Then check the board itself, because a board nobody prunes stops being read:
+
+- a task in `in_progress` with no `understanding.md`, or `done` with no
+  `resolution.md` → the gates were bypassed before v5, or the files were
+  deleted after; say which task and which file
+- anything in `in_progress` untouched for more than 7 days → ask whether it is
+  actually blocked, and if so say who was told
+- more than 20 open tasks → the board is a wish list, not a queue
 
 ### Sizes — the check nobody had
 

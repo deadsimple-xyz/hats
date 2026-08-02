@@ -88,6 +88,39 @@ if echo "$FILE_PATH" | grep -q "\.hats/shared/threads/"; then
   fi
 fi
 
+# 4a-ante. TASKS — the three gates, enforced here rather than requested in a
+# prompt. `scripts/task.sh` applies the same rules, but a role can Edit
+# `task.md` directly and would sail straight past them; a gate that only the
+# helper enforces is a convention wearing a mechanism's coat.
+#
+# Write carries the whole file in `content`, Edit carries a fragment in
+# `new_string`. Either way, if the text sets a status, that is the transition
+# being attempted.
+case "$FILE_PATH" in
+  */.hats/tasks/*/task.md)
+    TASK_DIR=$(dirname "$FILE_PATH")
+    WANT=$(echo "$INPUT" | jq -r '.tool_input.content // .tool_input.new_string // empty' \
+           | sed -nE 's/^status:[[:space:]]*([a-z_]+).*/\1/p' | head -1)
+    if [ -n "$WANT" ]; then
+      NOW=""
+      [ -f "$FILE_PATH" ] && NOW=$(sed -nE 's/^status:[[:space:]]*(.*)$/\1/p' "$FILE_PATH" | head -1)
+      # A task that was never in work was never understood, and «done» about it
+      # says nothing anyone can rely on.
+      if [ "$NOW" = "open" ] && [ "$WANT" = "done" ]; then
+        guard_block "open -> done is refused: a task closes only after being in work. Set status: in_progress, write ${TASK_DIR}/understanding.md, then close with ${TASK_DIR}/resolution.md"
+      fi
+      # Say what you think the job is BEFORE doing it — afterwards the sentence
+      # is a summary of what happened, which is a different and easier thing.
+      if [ "$WANT" = "in_progress" ] && [ "$NOW" != "in_progress" ] && [ ! -s "$TASK_DIR/understanding.md" ]; then
+        guard_block "in_progress needs ${TASK_DIR}/understanding.md — the file must exist and not be empty. Write what you think the job is, in your own words, then set the status"
+      fi
+      if [ "$WANT" = "done" ] && [ "$NOW" != "done" ] && [ ! -s "$TASK_DIR/resolution.md" ]; then
+        guard_block "done needs ${TASK_DIR}/resolution.md — the file must exist and not be empty. Write what you checked and what you concluded, then close it"
+      fi
+    fi
+    ;;
+esac
+
 # 4a-bis. Channels are DIRECTORIES now (scripts/channel.sh). `shared/qa2dev.md`
 # became `shared/qa2dev/0143-....md`, so the basename check below — which knows
 # only `qa2dev.md` — would refuse every write to the new shape and quietly

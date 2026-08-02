@@ -20,6 +20,7 @@ Create the missing directories and files (do NOT overwrite existing files):
 - `.hats/designer/` (private workspace)
 - `.hats/cto/` (private workspace)
 - `.hats/qa/`
+- `.hats/tasks/` (what is being worked on — folders in git)
 - `.hats/developer/` (private workspace)
 - `.hats/shared/`
 - `.hats/shared/specs/` (Manager writes .feature files here)

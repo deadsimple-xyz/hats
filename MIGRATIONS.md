@@ -30,6 +30,17 @@ live projects — 35 channels of 35 migrated with no loss.
 Un-migrated projects keep working: the guard still accepts the flat file, and
 the prompts tell a role what to do if it finds one.
 
+### Tasks
+
+New: `.hats/tasks/`, one folder per task, in git. Nothing to migrate — the
+directory appears when the first task is created, and projects without tasks
+are unaffected.
+
+Three status gates land with it, in `guard.sh` and in `scripts/task.sh` alike:
+`open -> done` refused; `in_progress` needs a non-empty `understanding.md`;
+`done` needs a non-empty `resolution.md`. They fire on hand-edits too — a gate
+only the helper enforces is a convention wearing a mechanism's coat.
+
 ### The role is per-session, and `HATS_ROLE` pins it
 
 `.hats/role` was per-DIRECTORY, so two sessions in one repo shared one fence

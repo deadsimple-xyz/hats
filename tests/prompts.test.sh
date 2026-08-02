@@ -16,9 +16,11 @@ echo "prompts — what the roles are actually told"
 # ── the shared fragments exist and are reachable from every role ──────────────
 assert_true "the route map exists"        test -f agents/_shared/pipeline.md
 assert_true "the channel discipline exists" test -f agents/_shared/channels.md
+assert_true "the task discipline exists"    test -f agents/_shared/tasks.md
 for r in $ROLES; do
   assert_true "$r is sent to the route map"        grep -q "_shared/pipeline.md" "agents/$r.md"
   assert_true "$r is sent to the channel discipline" grep -q "_shared/channels.md" "agents/$r.md"
+  assert_true "$r is sent to the task discipline"    grep -q "_shared/tasks.md" "agents/$r.md"
 done
 
 # ── nobody is still pointed at a channel FILE ─────────────────────────────────
@@ -57,10 +59,21 @@ assert_true "it says read the index first"       grep -q "INDEX.md" agents/_shar
 assert_true "it covers un-migrated projects"     grep -q "not migrated" agents/_shared/channels.md
 assert_true "it keeps threads as they were"      grep -q "threads" agents/_shared/channels.md
 
+# ── the task discipline says what the gates are and why ───────────────────────
+assert_true "it names the open->done refusal"     grep -q "open -> done" agents/_shared/tasks.md
+assert_true "it names understanding.md"           grep -q "understanding.md" agents/_shared/tasks.md
+assert_true "it names resolution.md"              grep -q "resolution.md" agents/_shared/tasks.md
+assert_true "it says the gates are in the hook"   grep -q "enforced by the hook" agents/_shared/tasks.md
+assert_true "it carries the queue rule"           grep -q "take tasks by priority" agents/_shared/tasks.md
+assert_true "and the ask-before-continuing half"  grep -q "then ASK whether to" agents/_shared/tasks.md
+
 # ── doctor knows about the migration and about sizes ──────────────────────────
 assert_true "doctor offers the channel migration" grep -q "channel.sh" skills/doctor/SKILL.md
 assert_true "doctor checks status.json size"      grep -q "status.json.* over 4 KB" skills/doctor/SKILL.md
 assert_true "doctor checks channel size"          grep -q "INDEX.md.* over 100 KB" skills/doctor/SKILL.md
 assert_true "doctor checks stray build output"    grep -q "node_modules" skills/doctor/SKILL.md
+assert_true "doctor checks the task board"        grep -q "no .understanding.md" skills/doctor/SKILL.md
+assert_true "doctor spots a stalled task"         grep -q "untouched for more than" skills/doctor/SKILL.md
+assert_true "init creates the task board"         grep -q ".hats/tasks/" skills/init/SKILL.md
 
 summary

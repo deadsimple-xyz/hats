@@ -99,6 +99,39 @@ my-app/
   src/               Your code lives at project root
 ```
 
+## Tasks are folders in git
+
+Specs say what must be **true**. Tasks say what someone is **doing** — and
+until v5 hats had no answer at all to «what is in flight, and what was closed
+yesterday and why» that outlived the session it was asked in.
+
+```
+.hats/tasks/
+  INDEX.md                        the board, one table
+  0042-runner-flaky-on-login/
+    task.md                       status / priority / owner / spec + the ask
+    understanding.md              written when work starts
+    resolution.md                 written when it closes
+```
+
+Three gates, enforced by the hook rather than asked for in a prompt:
+
+- **`open -> done` is refused** — a task closes only after being in work.
+- **`in_progress` needs a non-empty `understanding.md`** — say what you think
+  the job is *before* doing it. Afterwards that sentence is a summary, which is
+  a different and much easier thing to write.
+- **`done` needs a non-empty `resolution.md`** — what you checked, what you
+  concluded. The next person's question is «how do you know».
+
+```bash
+bash "$HATS_PLUGIN/scripts/task.sh" new "Runner is flaky on login" 1 developer @auth
+bash "$HATS_PLUGIN/scripts/task.sh" next
+bash "$HATS_PLUGIN/scripts/task.sh" status .hats/tasks/0042-runner-flaky-on-login in_progress
+```
+
+Editing `task.md` by hand works too and is gated identically — the helper is a
+convenience, not the fence.
+
 ## Channels are directories
 
 Each channel is a directory of entries plus a generated `INDEX.md`, newest
