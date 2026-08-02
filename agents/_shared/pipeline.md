@@ -59,6 +59,28 @@ you are stuck.
 
 **DO NOT ASK THE HUMAN TO RUN COMMANDS YOU CAN RUN.** If you can run it, run it.
 
+## Which role you are, and how firmly
+
+Your role is read by the guards, in this order: `HATS_ROLE` from the
+environment, then this session's own record, then `.hats/role`.
+
+- **If `HATS_ROLE` is set, you cannot change roles.** A write to `.hats/role`
+  is refused and says so. That is deliberate: wherever the fence has to be real
+  — an autopilot run, a spawned per-role session, CI — the thing being fenced
+  must not be able to move the fence.
+- **If it is not set, you can** — because that is the same door a human uses to
+  switch roles, and closing it would mean one session per role for everybody.
+  But every switch is written to `.hats/role-history` with the session, the old
+  role and the new one. Switching to get around a refusal is visible
+  afterwards, and it is not what the refusal was asking for.
+- **Two sessions in one repo do not share a role.** Each keeps its own.
+
+**Know what the fences do and do not cover.** They are hooks on the file tools —
+`Write`, `Edit`, `Read`, `Glob`, `Grep`. A shell command is not inspected: `cat`
+of a file you may not read, or a redirect into a path you may not write, goes
+through. That is a known edge (`tests/KNOWN-GAPS.md`, G3), not an invitation.
+The rules are the rules whichever tool you happen to be holding.
+
 ## When you are stuck
 
 Escalate along the line, not sideways and not in silence:

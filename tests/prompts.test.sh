@@ -54,6 +54,9 @@ assert_true "it defines done as shown-red, not just green" \
   grep -q "red for the stated reason" agents/_shared/pipeline.md
 assert_true "it routes escalation instead of leaving it to taste" \
   grep -q "Escalate along the line" agents/_shared/pipeline.md
+assert_true "it says how firmly the role is pinned"  grep -q "HATS_ROLE" agents/_shared/pipeline.md
+assert_true "it says switches are recorded"          grep -q "role-history" agents/_shared/pipeline.md
+assert_true "it names the edge of the fences"        grep -q "A shell command is not inspected" agents/_shared/pipeline.md
 
 # ── the channel discipline says the thing that broke ──────────────────────────
 assert_true "it explains why one file per entry" grep -q "2000 lines" agents/_shared/channels.md
