@@ -220,6 +220,38 @@ Decisions that outlive the chat get one line in the file they belong to — audi
 
 One line per decision is the whole ceremony. (Borrowed in spirit from the [First Principles Framework](https://github.com/ailev/FPF) — the idea, not the formalism.)
 
+## What «done» means
+
+Every role reads four shared fragments at activation, and they carry the parts
+of the job that are the same for everyone:
+
+| fragment | what it settles |
+|---|---|
+| `agents/_shared/pipeline.md` | the whole route, who owes what to whom, what you can reach without asking, what needs the human, what is impossible, and the two-attempt rule |
+| `agents/_shared/channels.md` | how channels are read and written, and why `status.json` is a state file rather than a third channel |
+| `agents/_shared/tasks.md` | the task board and the three gates |
+| `agents/_shared/evidence.md` | a green you have never seen go red is not evidence |
+
+The last one is the expensive rule and the one that pays fastest. Closing
+something on the strength of a test means breaking the mechanism the test
+watches, seeing the row go red **for the reason you named**, putting it back,
+and saying so in one line. If breaking the mechanism changes nothing, that is
+the finding: the rows never touched it.
+
+The QA report carries a three-line signature — what was checked (the command
+and its actual numbers), what was concluded (including what is still open), and
+what was falsified.
+
+## Testing hats itself
+
+```bash
+bash tests/run.sh
+```
+
+No framework to install. Known gaps live in `tests/KNOWN-GAPS.md`: they print
+on every run, they do not fail it, and they DO fail it the day they start
+passing — so a gap cannot be closed silently or forgotten.
+
 ## Why
 
 When one AI writes code AND tests, it tests its own assumptions -- same blind spots. By splitting into roles with separate contexts and separate prompts, the QA tests *requirements* while the Developer implements *solutions*. Neither can see the other's code.

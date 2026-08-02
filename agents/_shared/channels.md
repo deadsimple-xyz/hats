@@ -74,3 +74,33 @@ either.
 Threads (`.hats/shared/threads/*.md`) are the exception and stay as they are:
 any role may append to any thread. Use a thread when the exchange is a
 conversation; use a channel when it is an announcement.
+
+## `status.json` is a state file, not a channel
+
+`.hats/status.json` holds counters: how many entries a channel has, and how
+many of them each role has read. That is all it is for.
+
+It has a habit of becoming somewhere to put narrative. On one live project it
+reached **106 KB**, its `summary` field a wall of prose with bold text and
+references to message numbers — while the same file on a young project is
+**1 KB**. Nothing decided that; roles had nowhere cheap to say «here is where
+things stand» and put it in the file everyone reads on activation.
+
+Now they do have somewhere: an entry in the channel, or a line in a thread.
+
+- **Counters and phase only.** If you are writing a sentence into
+  `status.json`, it belongs in a channel entry.
+- It should stay under 4 KB. `/hats:doctor` complains past that.
+- Never paste test output, commit hashes, or a summary of the day into it.
+
+## Unread, with channels as directories
+
+`status.json` counts entries. A channel directory has one file per entry, so:
+
+- **how many entries** — the number of `[0-9]*.md` files;
+- **what you have not read** — everything above your `read_by.<role>` mark in
+  `INDEX.md`, which is newest-first, so it is the top of the list down to the
+  entry you already know;
+- **after reading**, set `read_by.<role>` to the current count.
+
+If the count and the file count disagree, believe the files and fix the count.

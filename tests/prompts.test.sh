@@ -17,10 +17,12 @@ echo "prompts — what the roles are actually told"
 assert_true "the route map exists"        test -f agents/_shared/pipeline.md
 assert_true "the channel discipline exists" test -f agents/_shared/channels.md
 assert_true "the task discipline exists"    test -f agents/_shared/tasks.md
+assert_true "the evidence discipline exists" test -f agents/_shared/evidence.md
 for r in $ROLES; do
   assert_true "$r is sent to the route map"        grep -q "_shared/pipeline.md" "agents/$r.md"
   assert_true "$r is sent to the channel discipline" grep -q "_shared/channels.md" "agents/$r.md"
   assert_true "$r is sent to the task discipline"    grep -q "_shared/tasks.md" "agents/$r.md"
+  assert_true "$r is sent to the evidence discipline" grep -q "_shared/evidence.md" "agents/$r.md"
 done
 
 # ── nobody is still pointed at a channel FILE ─────────────────────────────────
@@ -58,6 +60,10 @@ assert_true "it explains why one file per entry" grep -q "2000 lines" agents/_sh
 assert_true "it says read the index first"       grep -q "INDEX.md" agents/_shared/channels.md
 assert_true "it covers un-migrated projects"     grep -q "not migrated" agents/_shared/channels.md
 assert_true "it keeps threads as they were"      grep -q "threads" agents/_shared/channels.md
+assert_true "it says status.json is not a channel" \
+  grep -q "state file, not a channel" agents/_shared/channels.md
+assert_true "it names the 106 KB that proves it"  grep -q "106 KB" agents/_shared/channels.md
+assert_true "it explains unread against directories" grep -q "read_by" agents/_shared/channels.md
 
 # ── the task discipline says what the gates are and why ───────────────────────
 assert_true "it names the open->done refusal"     grep -q "open -> done" agents/_shared/tasks.md
@@ -66,6 +72,24 @@ assert_true "it names resolution.md"              grep -q "resolution.md" agents
 assert_true "it says the gates are in the hook"   grep -q "enforced by the hook" agents/_shared/tasks.md
 assert_true "it carries the queue rule"           grep -q "take tasks by priority" agents/_shared/tasks.md
 assert_true "and the ask-before-continuing half"  grep -q "then ASK whether to" agents/_shared/tasks.md
+
+# ── evidence: the rule that pays for itself ───────────────────────────────────
+assert_true "it demands the test be seen going red" \
+  grep -q "watch the row go red" agents/_shared/evidence.md
+assert_true "it says a falsification that changes nothing IS the finding" \
+  grep -q "changes nothing is the finding" agents/_shared/evidence.md
+assert_true "a report owes what was checked"   grep -q "What was checked" agents/_shared/evidence.md
+assert_true "and what was concluded"           grep -q "What was concluded" agents/_shared/evidence.md
+assert_true "it forbids reporting unrun work"  grep -q "written, not yet run" agents/_shared/evidence.md
+assert_true "it asks for the number, verbatim" grep -q "give the number" agents/_shared/evidence.md
+
+# ── the QA report carries a signature, not prose about effort ─────────────────
+assert_true "the report template has a Signature block" grep -q "^## Signature" agents/qa.md
+assert_true "it asks what was checked"    grep -q "^- Checked:" agents/qa.md
+assert_true "it asks what was concluded"  grep -q "^- Concluded:" agents/qa.md
+assert_true "it asks what was falsified"  grep -q "^- Falsified:" agents/qa.md
+assert_true "and says a green never seen failing is not evidence" \
+  grep -q "not evidence" agents/qa.md
 
 # ── doctor knows about the migration and about sizes ──────────────────────────
 assert_true "doctor offers the channel migration" grep -q "channel.sh" skills/doctor/SKILL.md
