@@ -35,6 +35,14 @@ for r in $ROLES; do
   assert_eq "$r names no channel as a flat .md" "$stale" ""
 done
 
+# The skills say the same things the agent files do, and drifted apart once
+# already: `autopilot` kept sending roles to `qa2dev.md` for eight lines after
+# the channels became directories, and no row could see it.
+for s in skills/*/SKILL.md; do
+  stale=$(grep -oE '[a-z0-9]+2[a-z0-9]+\.md' "$s" | sort -u | tr '\n' ' ')
+  assert_eq "$(dirname "$s") names no channel as a flat .md" "$stale" ""
+done
+
 # ── and everyone is told how to write one ─────────────────────────────────────
 for r in $ROLES; do
   assert_true "$r is told about channel.sh append" grep -q "channel.sh\" append\|channel.sh append" "agents/$r.md"

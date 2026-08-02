@@ -22,13 +22,13 @@ Then stop.
 Read in parallel:
 - `.hats/status.json` — channel + thread counts
 - `.hats/role` (if it exists) — current active role
-- `.hats/shared/manager2team.md`
-- `.hats/shared/cto2team.md`
-- `.hats/shared/designer2team.md`
-- `.hats/shared/qa2dev.md`
-- `.hats/shared/dev2qa.md`
-- `.hats/shared/qa2designer.md`
-- `.hats/shared/dev2designer.md`
+- `.hats/shared/manager2team/` (count entries, not lines)
+- `.hats/shared/cto2team/`
+- `.hats/shared/designer2team/`
+- `.hats/shared/qa2dev/`
+- `.hats/shared/dev2qa/`
+- `.hats/shared/qa2designer/`
+- `.hats/shared/dev2designer/`
 - `.hats/shared/qa-report.md` (if exists)
 
 For each shared/*.md file, take the last `## ` heading block (most recent message) so you can quote one line in the digest.

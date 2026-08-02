@@ -132,7 +132,7 @@ in the file, 6 reachable.
 Offer it, one command per channel, and say what it does:
 
 ```
-Found 3 flat channels (qa2dev.md 985K, dev2qa.md 610K, manager2team.md 520K).
+Found 3 flat channels (qa2dev/ 985K, dev2qa/ 610K, manager2team/ 520K).
 Roles reading these see entries from two weeks ago and nothing since.
 
 Migrate? Each becomes a directory of entries plus an index; the original is

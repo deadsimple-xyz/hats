@@ -58,7 +58,7 @@ AUTOPILOT CONTEXT: You are in autopilot mode.
 - Skip Phase 1 (interactive planning). Do NOT ask the human anything.
 - Proceed directly to Phase 2 (spawn your execution sub-agent) immediately.
 - If you hit a genuine blocker, write "## BLOCKER: [reason]" to
-  .hats/shared/qa2dev.md and stop.
+  .hats/shared/qa2dev/ and stop.
 
 You are a Hats QA agent. Read agents/qa.md for your full behavioral specification.
 
@@ -71,21 +71,21 @@ Your task: generate tests from specs.
 5. Generate automated tests in .hats/qa/ using the framework appropriate for the stack
 6. Write .hats/qa/run-tests.sh — ALWAYS use `bash run-tests.sh` to run tests, never run test commands directly
 7. Write the test contract to .hats/shared/test-contract.md (qa attributes, API endpoints, expected behaviors)
-8. Write a summary to .hats/shared/qa2dev.md
+8. Write a summary to .hats/shared/qa2dev/
 
 [On round 2+:]
 Your task: review Developer's feedback and adjust tests if needed.
 1. Write `qa` to `.hats/role`
 2. Read agents/qa.md
-3. Read .hats/shared/dev2qa.md for Developer's feedback
+3. Read .hats/shared/dev2qa/ for Developer's feedback
 4. Read .hats/shared/qa-report.md for latest test results
-5. If the Developer flagged test issues, fix them. If tests are correct and the Developer just needs to keep fixing code, write a clarifying message to .hats/shared/qa2dev.md explaining the expected behavior.
+5. If the Developer flagged test issues, fix them. If tests are correct and the Developer just needs to keep fixing code, write a clarifying message to .hats/shared/qa2dev/ explaining the expected behavior.
 6. Proceed directly to Phase 2 — spawn your execution sub-agent
 7. Run tests using `bash run-tests.sh` — NEVER run test commands directly (no raw npx playwright, npx bddgen, pytest, etc.)
-8. Write a summary to .hats/shared/qa2dev.md
+8. Write a summary to .hats/shared/qa2dev/
 ```
 
-**Verify:** Check that `.hats/qa/run-tests.sh` exists (round 1) or that QA wrote to `.hats/shared/qa2dev.md` (round 2+). If not, stop:
+**Verify:** Check that `.hats/qa/run-tests.sh` exists (round 1) or that QA wrote to `.hats/shared/qa2dev/` (round 2+). If not, stop:
 ```
 Autopilot: Blocked at QA — [no output produced].
 Run /hats:qa to resolve, then re-run /hats:autopilot.
@@ -93,7 +93,7 @@ Run /hats:qa to resolve, then re-run /hats:autopilot.
 
 ### Developer Turn
 
-**Before spawning:** Read the tail of `.hats/shared/qa2dev.md` (last entry) and the failing-tests section of `.hats/shared/qa-report.md` if it exists. Build a 3-5 line digest like:
+**Before spawning:** Read the tail of `.hats/shared/qa2dev/` (last entry) and the failing-tests section of `.hats/shared/qa-report.md` if it exists. Build a 3-5 line digest like:
 ```
 QA's latest message: <one-line summary>
 Failing tests this round: <count> — <one-line topic>
@@ -107,7 +107,7 @@ AUTOPILOT CONTEXT: You are in autopilot mode.
 - Skip Phase 1 (interactive planning). Do NOT ask the human anything.
 - Proceed directly to Phase 2 (implement→verify loop) immediately.
 - If you hit a genuine blocker, write "## BLOCKER: [reason]" to
-  .hats/shared/dev2qa.md and stop.
+  .hats/shared/dev2qa/ and stop.
 
 You are a Hats Developer agent. Read agents/developer.md for your full behavioral specification.
 
@@ -118,12 +118,12 @@ Your task:
 1. Write `developer` to `.hats/role`
 2. Read agents/developer.md
 3. Read .hats/shared/specs/*.feature and .hats/shared/stack.md
-4. Read .hats/shared/qa2dev.md for QA's latest message (full content)
+4. Read .hats/shared/qa2dev/ for QA's latest message (full content)
 5. Read .hats/shared/test-contract.md for the exact qa attributes, API endpoints, and expectations to implement against
 6. Read .hats/developer/notes.md for in-flight context from prior rounds
 7. Proceed directly to Phase 2 — run the implement→verify loop (up to 5 cycles)
 8. Maintain `.hats/developer/notes.md` between cycles — when you spawn implement/verify sub-agents, paste relevant lines from notes.md inline so they don't re-read the same files
-9. After finishing, write a summary to .hats/shared/dev2qa.md with final results
+9. After finishing, write a summary to .hats/shared/dev2qa/ with final results
 ```
 
 **Read results:** After the sub-agent completes, read `.hats/shared/qa-report.md`.
@@ -148,7 +148,7 @@ Autopilot: Round [N]/3 complete — [X passed, Y failed]. [Starting next round..
 ```
 Autopilot: Loop complete after [N] round(s).
 
-QA:        [N tests, from .hats/shared/qa2dev.md]
+QA:        [N tests, from .hats/shared/qa2dev/]
 Developer: [X passed, Y failed — from .hats/shared/qa-report.md]
 
 [If any tests still failing:]
