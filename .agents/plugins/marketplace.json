@@ -1,0 +1,21 @@
+{
+  "name": "deadsimple-xyz",
+  "interface": {
+    "displayName": "DeadSimple"
+  },
+  "plugins": [
+    {
+      "name": "hats",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/deadsimple-xyz/hats.git",
+        "ref": "main"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

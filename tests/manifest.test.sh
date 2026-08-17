@@ -19,17 +19,37 @@ cd "$HATS_ROOT"
 echo "manifest — does this thing still load"
 
 # ── every JSON we ship must parse. A broken manifest is a silent no-op. ───────
-for f in .claude-plugin/plugin.json .claude-plugin/marketplace.json hooks/hooks.json settings.json; do
+for f in .claude-plugin/plugin.json .claude-plugin/marketplace.json \
+         .codex-plugin/plugin.json .agents/plugins/marketplace.json \
+         hooks/hooks.json settings.json; do
   assert_true "$f parses" jq -e . "$f"
 done
 
 PLUGIN_V=$(jq -r '.version' .claude-plugin/plugin.json)
 MARKET_V=$(jq -r '.plugins[] | select(.name=="hats") | .version' .claude-plugin/marketplace.json)
+CODEX_V=$(jq -r '.version' .codex-plugin/plugin.json)
 assert_eq "plugin.json and marketplace.json agree on the version" "$MARKET_V" "$PLUGIN_V"
+assert_eq "Claude and Codex manifests agree on the version" "$CODEX_V" "$PLUGIN_V"
 
 assert_eq "plugin name matches the marketplace entry" \
   "$(jq -r '.name' .claude-plugin/plugin.json)" \
   "$(jq -r '.plugins[] | select(.name=="hats") | .name' .claude-plugin/marketplace.json)"
+assert_eq "Claude and Codex manifests agree on the name" \
+  "$(jq -r '.name' .codex-plugin/plugin.json)" \
+  "$(jq -r '.name' .claude-plugin/plugin.json)"
+assert_eq "Codex marketplace names the same plugin" \
+  "$(jq -r '.plugins[0].name' .agents/plugins/marketplace.json)" \
+  "$(jq -r '.name' .codex-plugin/plugin.json)"
+assert_eq "Codex manifest exports the shared skills" \
+  "$(jq -r '.skills' .codex-plugin/plugin.json)" "./skills/"
+assert_true "Codex uses default hook discovery" \
+  jq -e 'has("hooks") | not' .codex-plugin/plugin.json
+assert_eq "Codex marketplace install policy is explicit" \
+  "$(jq -r '.plugins[0].policy.installation' .agents/plugins/marketplace.json)" "AVAILABLE"
+assert_eq "Codex marketplace auth policy is explicit" \
+  "$(jq -r '.plugins[0].policy.authentication' .agents/plugins/marketplace.json)" "ON_INSTALL"
+assert_eq "Codex marketplace category is explicit" \
+  "$(jq -r '.plugins[0].category' .agents/plugins/marketplace.json)" "Productivity"
 
 # ── every hook command must exist and be runnable ─────────────────────────────
 # The failure this catches is the ugliest kind: the hook is declared, Claude

@@ -1,6 +1,7 @@
 # Hats
 
-BDD-driven AI dev team. Five roles, one [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
+BDD-driven AI dev team for Claude Code and Codex. Five roles, one shared
+project protocol.
 
 ```
 manager -> designer -> cto -> qa -> developer
@@ -8,7 +9,7 @@ manager -> designer -> cto -> qa -> developer
  specs     mockups    stack  tests    code
 ```
 
-## Quick Start
+## Quick Start — Claude Code
 
 ```bash
 /plugin marketplace add deadsimple-xyz/claude-plugins
@@ -20,7 +21,26 @@ manager -> designer -> cto -> qa -> developer
 
 Requires [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI.
 
-## Commands
+## Quick Start — Codex
+
+```bash
+codex plugin marketplace add deadsimple-xyz/hats
+codex plugin add hats@deadsimple-xyz
+```
+
+Start a new conversation after installing, then invoke the skills with a `$`
+prefix:
+
+```text
+$hats:init
+$hats:manager
+```
+
+Claude Code discovers `.claude-plugin/plugin.json`; Codex discovers
+`.codex-plugin/plugin.json`. Both manifests package the same `skills/`,
+`agents/`, `hooks/`, and `scripts/` directories from this repository.
+
+## Skills and commands
 
 ```
 /hats:init          # set up project (new or existing)
@@ -33,6 +53,10 @@ Requires [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI.
 /hats:solo          # exit role mode, work as plain Claude
 /hats:doctor        # diagnose and fix project structure
 ```
+
+The list above uses Claude Code slash-command spelling. In Codex, use the same
+names with a `$` prefix (`$hats:qa`, `$hats:developer`, and so on). The role
+profiles under `agents/` are shared unchanged by both hosts.
 
 The typical flow is `manager > designer > cto > qa > developer`, but you can talk to any role at any time. If you know your stack, skip the CTO. If you have your own designs, skip the Designer. If something breaks in tests, jump into QA and discuss it.
 
@@ -64,9 +88,28 @@ Then each role takes over:
 | **QA** | `.hats/shared/`, `.hats/qa/` | `.hats/qa/`, `.hats/shared/qa-report.md`, `qa2dev.md`, `qa2designer.md`, `test-contract.md` |
 | **Developer** | `.hats/shared/` + project root | project root, `.hats/shared/setup.md`, `api.md`, `dev2qa.md`, `dev2designer.md` |
 
-Permissions are enforced by hooks -- the Developer literally *can't* read tests, and the QA *can't* read source code. Both halves are checked by rows in `tests/read-guard.test.sh`; the QA half was prose until 5.0.0, which is precisely why the tests exist.
+Under Claude Code's file tools, permissions are enforced by hooks -- the
+Developer literally *can't* read tests, and the QA *can't* read source code.
+Both halves are checked by rows in `tests/read-guard.test.sh`; the QA half was
+prose until 5.0.0, which is precisely why the tests exist.
 
-**Know the edge of that guarantee.** The hooks match the file tools — `Write`, `Edit`, `Read`, `Glob`, `Grep`. **Bash is not matched**, so a role that reaches for a shell can read and write anything: `cat src/app.ts` works, and so does `echo … > file`. Roles need Bash constantly and legitimately, and deciding what an arbitrary command will touch means parsing a shell — so this is a known edge rather than an oversight (`tests/KNOWN-GAPS.md`, G3). The fences shape what a role does by default; they are not a sandbox. QA writes a plain-language report (`.hats/shared/qa-report.md`) so the Developer understands what failed and why, without seeing test code.
+Codex sends normal edits as `apply_patch`; Hats expands a multi-file patch and
+checks every source and destination path against the same write rules. Codex
+normally reads files through its shell tool, so its read fence is audit-only:
+disallowed-looking reads are recorded by `bash-audit.sh`, not refused. This is
+the same deliberate Bash escape hatch described below, but it is the normal
+read path in Codex rather than an exceptional one.
+
+**Know the edge of that guarantee.** The hooks match the Claude file tools —
+`Write`, `Edit`, `Read`, `Glob`, `Grep` — plus Codex `apply_patch` writes.
+**Bash is audited, not blocked**, so a role that reaches for a shell can read
+and write anything: `cat src/app.ts` works, and so does `echo … > file`. Roles
+need Bash constantly and legitimately, and deciding what an arbitrary command
+will touch means parsing a shell — so this is a known edge rather than an
+oversight (`tests/KNOWN-GAPS.md`, G3). The fences shape what a role does by
+default; they are not a sandbox. QA writes a plain-language report
+(`.hats/shared/qa-report.md`) so the Developer understands what failed and why,
+without seeing test code.
 
 ## Project Structure
 

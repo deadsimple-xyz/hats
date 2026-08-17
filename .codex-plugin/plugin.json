@@ -1,0 +1,36 @@
+{
+  "name": "hats",
+  "version": "5.0.0",
+  "description": "BDD-driven AI dev team. Five roles: Manager, Designer, CTO, QA, Developer.",
+  "author": {
+    "name": "deadsimple",
+    "url": "https://github.com/deadsimple-xyz"
+  },
+  "homepage": "https://github.com/deadsimple-xyz/hats",
+  "repository": "https://github.com/deadsimple-xyz/hats",
+  "license": "MIT",
+  "keywords": [
+    "bdd",
+    "gherkin",
+    "agents",
+    "roles",
+    "tdd"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Hats",
+    "shortDescription": "A BDD-driven AI development team",
+    "longDescription": "Coordinate Manager, Designer, CTO, QA, and Developer roles through specs, tests, and durable project handoffs.",
+    "developerName": "DeadSimple",
+    "category": "Productivity",
+    "capabilities": [
+      "Write",
+      "Subagents"
+    ],
+    "defaultPrompt": [
+      "Initialize Hats in this project.",
+      "Switch to the Hats Manager role.",
+      "Show the current Hats project status."
+    ]
+  }
+}

@@ -95,4 +95,97 @@ assert_block "and nobody else may"                       $G developer "$PROJECT/
 # The old flat shape keeps working — projects migrate when they choose to.
 assert_allow "the pre-migration flat file still works"   $G qa        "$PROJECT/.hats/shared/qa2dev.md"
 
+# ── Codex apply_patch is normalized into the same path decisions ─────────────
+PATCH="*** Begin Patch
+*** Add File: src/codex.ts
++export const host = 'codex'
+*** End Patch"
+run_codex_patch developer "$PATCH"
+assert_eq "Codex: developer may patch source" "$GUARD_CODE" "0"
+run_codex_patch qa "$PATCH"
+if [ "$GUARD_CODE" -eq 2 ] && echo "$GUARD_ERR" | grep -q "can only write inside .hats/"; then
+  _ok "Codex: qa may not patch source"
+else
+  _fail "Codex: qa may not patch source" "expected the normal source fence, got $GUARD_CODE ($GUARD_ERR)"
+fi
+
+PATCH="*** Begin Patch
+*** Add File: .hats/shared/specs/codex.feature
++Feature: Codex hooks
+*** End Patch"
+run_codex_patch manager "$PATCH"
+assert_eq "Codex: manager may patch a spec" "$GUARD_CODE" "0"
+run_codex_patch qa "$PATCH"
+if [ "$GUARD_CODE" -eq 2 ] && echo "$GUARD_ERR" | grep -q "owned by the manager"; then
+  _ok "Codex: qa may not patch a spec"
+else
+  _fail "Codex: qa may not patch a spec" "expected the feature fence, got $GUARD_CODE ($GUARD_ERR)"
+fi
+
+PATCH="*** Begin Patch
+*** Update File: src/ok.ts
+@@
+-old
++new
+*** Update File: .hats/qa/secret.test.ts
+@@
+-old
++new
+*** End Patch"
+run_codex_patch developer "$PATCH"
+if [ "$GUARD_CODE" -eq 2 ] && echo "$GUARD_ERR" | grep -q "cannot write to .hats/qa/"; then
+  _ok "Codex: every path in a multi-file patch must pass"
+else
+  _fail "Codex: every path in a multi-file patch must pass" "expected the qa-dir fence, got $GUARD_CODE ($GUARD_ERR)"
+fi
+
+PATCH="*** Begin Patch
+*** Update File: src/original.ts
+*** Move to: .hats/qa/moved.ts
+@@
+-old
++new
+*** End Patch"
+run_codex_patch developer "$PATCH"
+if [ "$GUARD_CODE" -eq 2 ] && echo "$GUARD_ERR" | grep -q "cannot write to .hats/qa/"; then
+  _ok "Codex: a move checks its destination"
+else
+  _fail "Codex: a move checks its destination" "expected the move destination fence, got $GUARD_CODE ($GUARD_ERR)"
+fi
+
+run_codex_patch qa "not an apply_patch envelope"
+if [ "$GUARD_CODE" -eq 2 ] && echo "$GUARD_ERR" | grep -q "recognizable file paths"; then
+  _ok "Codex: an unrecognized patch fails closed"
+else
+  _fail "Codex: an unrecognized patch fails closed" "expected a fail-closed refusal, got $GUARD_CODE ($GUARD_ERR)"
+fi
+
+PATCH="*** Begin Patch
+*** Update File: .hats/role
+@@
+-qa
++manager
+*** End Patch"
+run_codex_patch qa "$PATCH"
+if [ "$GUARD_CODE" -eq 0 ] && [ "$(cat "$PROJECT/.hats/sessions/$SESSION")" = "manager" ]; then
+  _ok "Codex: a role switch is recorded from patch content"
+else
+  _fail "Codex: a role switch is recorded from patch content" "code $GUARD_CODE; session role $(cat "$PROJECT/.hats/sessions/$SESSION" 2>/dev/null || echo missing)"
+fi
+
+mkdir -p "$PROJECT/.hats/tasks/0001-codex-gate"
+printf 'status: open\n' > "$PROJECT/.hats/tasks/0001-codex-gate/task.md"
+PATCH="*** Begin Patch
+*** Update File: .hats/tasks/0001-codex-gate/task.md
+@@
+-status: open
++status: done
+*** End Patch"
+run_codex_patch developer "$PATCH"
+if [ "$GUARD_CODE" -eq 2 ] && echo "$GUARD_ERR" | grep -q "open -> done is refused"; then
+  _ok "Codex: task transitions still pass through the gates"
+else
+  _fail "Codex: task transitions still pass through the gates" "expected the open -> done gate, got $GUARD_CODE ($GUARD_ERR)"
+fi
+
 summary

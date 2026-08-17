@@ -12,8 +12,59 @@ if [ -z "$ROLE" ]; then
   exit 0
 fi
 
-FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 TOOL_NAME=$(echo "$INPUT" | jq -r '.tool_name // empty')
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+
+# Codex exposes file edits as `apply_patch`. Its hook matcher accepts the
+# Claude aliases `Write|Edit`, but the payload still carries the canonical
+# tool name and puts the patch in `tool_input.command`, not `file_path`.
+#
+# Normalize that one multi-file call into the same single-path calls the guard
+# has always decided. This keeps the policy below shared: Claude and Codex get
+# the same rows, and a patch touching five files must pass all five.
+if [ "$TOOL_NAME" = "apply_patch" ] && [ -z "$FILE_PATH" ] && [ -z "${HATS_GUARD_NORMALIZED:-}" ]; then
+  PATCH=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
+  PATHS=$(printf '%s\n' "$PATCH" | awk '
+    /^\*\*\* (Add|Update|Delete) File: / {
+      sub(/^\*\*\* (Add|Update|Delete) File: /, ""); print; next
+    }
+    /^\*\*\* Move to: / {
+      sub(/^\*\*\* Move to: /, ""); print
+    }
+  ' | awk '!seen[$0]++')
+
+  if [ -z "$PATHS" ]; then
+    echo "Blocked: apply_patch did not expose any recognizable file paths" >&2
+    exit 2
+  fi
+
+  while IFS= read -r PATCH_PATH; do
+    [ -n "$PATCH_PATH" ] || continue
+    # Keep content local to this file. A global collection could accidentally
+    # apply `status: done` from one task to another file in the same patch, or
+    # record a role name together with unrelated added lines.
+    PATCH_CONTENT=$(printf '%s\n' "$PATCH" | awk -v target="$PATCH_PATH" '
+      /^\*\*\* (Add|Update|Delete) File: / {
+        current = $0
+        sub(/^\*\*\* (Add|Update|Delete) File: /, "", current)
+        next
+      }
+      current == target && /^\+/ {
+        line = $0; sub(/^\+/, "", line); print line
+      }
+    ')
+    NORMALIZED=$(echo "$INPUT" | jq \
+      --arg path "$PATCH_PATH" \
+      --arg content "$PATCH_CONTENT" \
+      '.tool_name = "Write" | .tool_input = {file_path: $path, content: $content}')
+    printf '%s\n' "$NORMALIZED" | HATS_GUARD_NORMALIZED=1 bash "$0"
+    NORMALIZED_CODE=$?
+    [ "$NORMALIZED_CODE" -eq 0 ] || exit "$NORMALIZED_CODE"
+  done <<EOF
+$PATHS
+EOF
+  exit 0
+fi
 
 if [ -z "$FILE_PATH" ]; then
   exit 0

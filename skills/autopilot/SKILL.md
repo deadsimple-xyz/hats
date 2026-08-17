@@ -51,6 +51,9 @@ Wait for go-ahead. This is the **only** human interaction.
 
 ### QA Turn
 
+Resolve `../../agents/qa.md` relative to this `SKILL.md` before spawning and
+put that absolute path into the prompt below.
+
 Spawn a sub-agent:
 
 ```
@@ -60,12 +63,14 @@ AUTOPILOT CONTEXT: You are in autopilot mode.
 - If you hit a genuine blocker, write "## BLOCKER: [reason]" to
   .hats/shared/qa2dev/ and stop.
 
-You are a Hats QA agent. Read agents/qa.md for your full behavioral specification.
+You are a Hats QA agent. Read the QA profile at `../../agents/qa.md`, resolved
+relative to the Autopilot `SKILL.md`, for your full behavioral specification.
+The parent must replace this with the resolved absolute path when spawning you.
 
 [On round 1:]
 Your task: generate tests from specs.
 1. Write `qa` to `.hats/role`
-2. Read agents/qa.md
+2. Read the resolved QA profile path supplied by the parent
 3. Read .hats/shared/specs/*.feature and .hats/shared/stack.md
 4. Proceed directly to Phase 2 — spawn your execution sub-agent
 5. Generate automated tests in .hats/qa/ using the framework appropriate for the stack
@@ -93,6 +98,9 @@ Run /hats:qa to resolve, then re-run /hats:autopilot.
 
 ### Developer Turn
 
+Resolve `../../agents/developer.md` relative to this `SKILL.md` before spawning
+and put that absolute path into the prompt below.
+
 **Before spawning:** Read the tail of `.hats/shared/qa2dev/` (last entry) and the failing-tests section of `.hats/shared/qa-report.md` if it exists. Build a 3-5 line digest like:
 ```
 QA's latest message: <one-line summary>
@@ -109,14 +117,17 @@ AUTOPILOT CONTEXT: You are in autopilot mode.
 - If you hit a genuine blocker, write "## BLOCKER: [reason]" to
   .hats/shared/dev2qa/ and stop.
 
-You are a Hats Developer agent. Read agents/developer.md for your full behavioral specification.
+You are a Hats Developer agent. Read the Developer profile at
+`../../agents/developer.md`, resolved relative to the Autopilot `SKILL.md`, for
+your full behavioral specification. The parent must replace this with the
+resolved absolute path when spawning you.
 
 ## Round signal (from QA → Dev handoff)
 [INSERT THE 3-5 LINE DIGEST YOU BUILT ABOVE]
 
 Your task:
 1. Write `developer` to `.hats/role`
-2. Read agents/developer.md
+2. Read the resolved Developer profile path supplied by the parent
 3. Read .hats/shared/specs/*.feature and .hats/shared/stack.md
 4. Read .hats/shared/qa2dev/ for QA's latest message (full content)
 5. Read .hats/shared/test-contract.md for the exact qa attributes, API endpoints, and expectations to implement against
@@ -167,7 +178,8 @@ All tests green. Feature complete.
 - **NEVER write to any `.hats/` directory directly** — all file writes happen inside sub-agents
 - **NEVER read `.hats/qa/` source files** — only read reports in `.hats/shared/`
 - Run QA and Developer **strictly in sequence** — never concurrently (avoids `.hats/role` conflicts)
-- Each sub-agent reads its own `agents/[role].md` for behavioral details
+- Each sub-agent reads the absolute role-profile path resolved by the parent
+  from `../../agents/[role].md` relative to this `SKILL.md`
 - On Agent tool error: retry once, then stop and report to the user
 - The single go-ahead in Entry Step 2 is the **only** human interaction during the loop
 - After each stage, verify output before proceeding — fail fast rather than silently continuing

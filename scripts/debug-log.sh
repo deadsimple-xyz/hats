@@ -68,6 +68,17 @@ case "$TOOL" in
     DESC=$(echo "$INPUT" | jq -r '.tool_input.description // empty' | redact_secrets)
     echo "{$META,\"tool\":\"Agent\",\"description\":$(echo "$DESC" | jq -Rs .)}" >> "$LOG_FILE"
     ;;
+  apply_patch)
+    FILES=$(echo "$INPUT" | jq -r '.tool_input.command // empty' | awk '
+      /^\*\*\* (Add|Update|Delete) File: / {
+        sub(/^\*\*\* (Add|Update|Delete) File: /, ""); print; next
+      }
+      /^\*\*\* Move to: / {
+        sub(/^\*\*\* Move to: /, ""); print
+      }
+    ' | jq -Rsc 'split("\n") | map(select(length > 0))')
+    echo "{$META,\"tool\":\"apply_patch\",\"files\":$FILES}" >> "$LOG_FILE"
+    ;;
   *)
     echo "{$META,\"tool\":\"$TOOL\"}" >> "$LOG_FILE"
     ;;

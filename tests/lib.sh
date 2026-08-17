@@ -41,6 +41,15 @@ run_guard() {
   GUARD_ERR="$out"
 }
 
+# Feed a Codex apply_patch call to the write guard. Codex matches the hook via
+# the Write|Edit aliases, but reports the canonical tool name and puts the
+# complete patch in tool_input.command.
+run_codex_patch() {
+  local role="$1" patch="$2" json
+  json=$(printf '%s' "$patch" | jq -Rs '{command: .}')
+  run_guard guard.sh "$role" "$json" apply_patch
+}
+
 # Switch a role the way a skill does: a Write to .hats/role that passes through
 # the guard, so the guard gets its chance to record and to refuse.
 switch_role() {

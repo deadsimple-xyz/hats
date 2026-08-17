@@ -1,11 +1,11 @@
 ---
 name: solo
-description: Exit HATS mode and work as plain Claude (no role restrictions).
+description: Exit HATS mode and work as the plain host agent (no role restrictions).
 ---
 
 # Solo Mode
 
-Disable HATS role enforcement so you can work freely as plain Claude.
+Disable HATS role enforcement so you can work freely as the plain host agent.
 
 ## Steps
 
@@ -13,7 +13,7 @@ Disable HATS role enforcement so you can work freely as plain Claude.
    ```bash
    rm -f .hats/role
    ```
-2. Tell the user: "Solo mode. Guards are off -- you're working as plain Claude now. Use any `/hats:<role>` skill to re-enter a role."
+2. Tell the user: "Solo mode. Guards are off -- you're working as the plain host agent now. Use any Hats role skill to re-enter a role."
 
 ## Rules
 

@@ -9,17 +9,24 @@ hats_version() {
   jq -r .version "$script_dir/../.claude-plugin/plugin.json" 2>/dev/null || echo "unknown"
 }
 
-# Active Claude model — best effort.
+# Active host model — best effort.
 # Resolution order:
 #   1. .hats/model file (manual override)
-#   2. transcript_path's most recent "model" field
-#   3. CLAUDE_MODEL / ANTHROPIC_MODEL env vars
-#   4. "unknown"
+#   2. hook input's model field (Codex supplies this directly)
+#   3. transcript_path's most recent "model" field
+#   4. CLAUDE_MODEL / ANTHROPIC_MODEL env vars
+#   5. "unknown"
 # Args: the hook's stdin JSON (so we can read transcript_path).
 hats_model() {
   local input="$1"
   if [ -f ".hats/model" ]; then
     cat .hats/model
+    return
+  fi
+  local hook_model
+  hook_model=$(echo "$input" | jq -r '.model // empty' 2>/dev/null)
+  if [ -n "$hook_model" ]; then
+    echo "$hook_model"
     return
   fi
   local transcript
